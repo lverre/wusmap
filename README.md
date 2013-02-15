@@ -1,4 +1,6 @@
 wusmap
 ======
 
-Show the route for your whatusea account
+*Shows the route for your whatusea account*
+
+Guide comming soon...
