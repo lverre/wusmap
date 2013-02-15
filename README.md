@@ -4,11 +4,11 @@ Wusmap is a php program that generates maps that display the route of your boat,
 
 ### Get Started
 
-Please, visit the [install](wiki/Install) page.
+Please, visit the install wiki page.
 
 ### Bugs, Missing Features
 
-Please, visit the [issues](issues) page.
+Please, visit the issues page.
 
 ### Notes
 
