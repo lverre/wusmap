@@ -26,3 +26,5 @@ d) add a daily scheduled task that launches /www/wusmap/checkemails.php (for OVH
 3) Use
 If you choose the IFrame output, just put the link as the source of an iframe, e.g. <iframe src="yoursite.com/wusmap/getmap.php?blablablah"></iframe>.
 If you choose the Script output, you have to include it in the head of your page and you need to know the id of the element on your page where the map will be. You can study the iframe output, it should be straightforward.
+
+Important Note: do not read the unread "XML Position" emails: the program only checks for unread emails. If you read an unread email, mark it as unread afterwards.
