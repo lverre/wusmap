@@ -12,4 +12,4 @@ Please, visit the issues page.
 
 ### Notes
 
-This project uses inforboxes from the [Google Maps Utility Library](http://google-maps-utility-library-v3.googlecode.com/).
+This project uses infoboxes from the [Google Maps Utility Library](http://google-maps-utility-library-v3.googlecode.com/).
