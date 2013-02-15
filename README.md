@@ -1,6 +1,15 @@
-wusmap
-======
+### Welcome to Wusmap
 
-*Shows the route for your whatusea account*
+Wusmap is a php program that generates maps that display the route of your boat, getting data from your [whatusea.com](http://www.whatusea.com/) account.
 
-Guide comming soon...
+### Get Started
+
+Please, visit the [install](wiki/Install) page.
+
+### Bugs, Missing Features
+
+Please, visit the [issues](issues) page.
+
+### Notes
+
+This project uses inforboxes from the [Google Maps Utility Library](http://google-maps-utility-library-v3.googlecode.com/).
