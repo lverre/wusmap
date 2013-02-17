@@ -155,7 +155,7 @@ if (getOrDefault("output", null) != "iframe") {
 	<link rel="stylesheet" href="wusmap.css" />
 	<script src="http://maps.google.com/maps/api/js?sensor=false"></script>
 	<script src="infobox_packed.js"></script>
-	<script src="wusmap.js"></script>
+	<script src="wusmap_map.js"></script>
 	<script>
 <?php echo $js; ?>
 	</script>
