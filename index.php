@@ -38,6 +38,7 @@ include_once "general.php";
 <body>
 <h1>Get Wusmap Map</h1>
 <form method="get" action="getmap.php">
+<div style="float:left; margin: 8px 16px 8px 8px;">
 <table>
 <tr>
 	<th colspan="2">General</th>
@@ -100,6 +101,17 @@ while ($asset = $assets->fetch_assoc()) {
 	<td><input type="number" min="-180" max="180" name="center_lon" id="center_lon" title="In decimal: 42.5 for 45&deg;30'E" style="width: 100px" disabled="disabled" /></td>
 </tr>
 <tr>
+	<td><label for="map_type">Map Type:</label></td>
+	<td>
+		<select name="map_type" id="map_type">
+			<option value="ROADMAP">Roads</option>
+			<option value="SATELLITE">Satellite</option>
+			<option value="TERRAIN">Terrain</option>
+			<option value="HYBRID" selected="selected">Hybrid (Roads + Sat)</option>
+		</select>
+	</td>
+</tr>
+<tr>
 	<td colspan="2">
 		<input type="checkbox" name="navigation_control" id="navigation_control" checked="checked" title="Whether to show the navigation control in the map or not" />
 		<label for="navigation_control">Navigation Control</label></td>
@@ -117,32 +129,10 @@ while ($asset = $assets->fetch_assoc()) {
 		<label for="scale_control">Scale Control</label>
 	</td>
 </tr>
-<tr>
-	<td><label for="map_type">Map Type:</label></td>
-	<td>
-		<select name="map_type" id="map_type">
-			<option value="ROADMAP">Roads</option>
-			<option value="SATELLITE">Satellite</option>
-			<option value="TERRAIN">Terrain</option>
-			<option value="HYBRID" selected="selected">Hybrid (Roads + Sat)</option>
-		</select>
-	</td>
-</tr>
-<tr>
-	<th colspan="2">Route</th>
-</tr>
-<tr>
-	<td><label for="route_color">Route Color:</label></td>
-	<td><input type="color" name="route_color" id="route_color" value="#008000" title="The color of the route's line (in HTML hex style ie. '#FFAA00', or default value ie. 'blue')" /></td>
-</tr>
-<tr>
-	<td><label for="route_opacity">Route Opacity:</label></td>
-	<td><input type="number" min="0" max="1" name="route_opacity" id="route_opacity" value="1" title="The opacity of the route's line (0.0 is transparent, 1.0 is opaque)" style="width: 50px" /></td>
-</tr>
-<tr>
-	<td><label for="route_weight">Route Weight:</label></td>
-	<td><input type="number" min="0" max="100" name="route_weight" id="route_weight" value="2" title="The width of the route's line (in pixels)" style="width: 50px" /></td>
-</tr>
+</table>
+</div>
+<div style="float:left; margin: 8px 16px 8px 16px;">
+<table>
 <tr>
 	<th colspan="2">Dates</th>
 </tr>
@@ -160,8 +150,26 @@ while ($asset = $assets->fetch_assoc()) {
 	</td>
 	<td><input type="datetime" name="max_date" id="max_date" disabled="disabled" style="display:none;" title="The end date of the route" /></td>
 </tr>
+<tr>
+	<th colspan="2">Route</th>
+</tr>
+<tr>
+	<td><label for="route_color">Route Color:</label></td>
+	<td><input type="color" name="route_color" id="route_color" value="#008000" title="The color of the route's line (in HTML hex style ie. '#FFAA00', or default value ie. 'blue')" /></td>
+</tr>
+<tr>
+	<td><label for="route_opacity">Route Opacity:</label></td>
+	<td><input type="number" min="0" max="1" name="route_opacity" id="route_opacity" value="1" title="The opacity of the route's line (0.0 is transparent, 1.0 is opaque)" style="width: 50px" /></td>
+</tr>
+<tr>
+	<td><label for="route_weight">Route Weight:</label></td>
+	<td><input type="number" min="0" max="100" name="route_weight" id="route_weight" value="2" title="The width of the route's line (in pixels)" style="width: 50px" /></td>
+</tr>
 </table>
-<input type="submit" value="Get Map" />
+</div>
+<div style="float:left; margin: 8px 8px 8px 16px;">
+	<input type="submit" value="Get Map" />
+</div>
 </form>
 </body>
 </html>
