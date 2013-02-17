@@ -32,13 +32,19 @@ function checkEmails() {
 	$table_name = $CONFIG['db_prefix'] . "points";
 	$connection = imap_open('{' . $CONFIG['email_host'] . '/notls}', $CONFIG['email_name'], $CONFIG['email_pwd']);
 	$count = imap_num_msg($connection);
+	$output = "";
 	for($i = 1; $i <= $count; $i++) {
 		$header = imap_headerinfo($connection, $i);
 		if ($header->Unseen == 'U' && $header->from[0]->host == 'advanced-tracking.com' && !strncmp($header->subject, 'XML Position', 12)) {
-			echo "One new email at " . $header->date . "<br />";
+			$output .= "<li>" . $header->date . "</li>\n";
 			$result = parseEmail(stripslashes(imap_body($connection, $i)));
 			executeSQL("insert into " . $CONFIG['db_prefix'] . "points ( asset_id, latitude, longitude, time, heading, speed ) values ( " . $result['asset_id'] . ", " . $result['latitude'] . ", " . $result['longitude'] . ", '" . $result['datetime'] . "', " . $result['heading'] . ", " . $result['speed'] . " )");
 		}
+	}
+	if ($output == "") {
+		echo "No new email.";
+	} else {
+		echo "Parsed emails received at:\n<ul>\n" . $output . "</ul>";
 	}
 }
 
