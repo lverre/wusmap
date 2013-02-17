@@ -65,17 +65,18 @@ if (isset($_REQUEST['input'])) {
 	<meta charset=utf-8 />
 	<title>Manually Add A Point</title>
 	<link rel="stylesheet" href="wusmap.css" />
+	<script src="wusmap.js"></script>
 </head>
 <body>
 <h1>Manually Add A Point</h1>
 <form method="post">
 <div>
-	<input type="radio" name="input" id="input_values" value="values" onchange="if (this.checked) { document.getElementById('xml_div').style.display = 'none'; document.getElementById('values_table').style.display = 'block'; }" checked="checked" /><label for="input_values">Values</label>
-	<input type="radio" name="input" id="input_xml" value="xml" onchange="if (this.checked) { document.getElementById('xml_div').style.display = 'block'; document.getElementById('values_table').style.display = 'none'; }" /><label for="input_xml">XML</label>
+	<input type="radio" name="input" id="input_values" value="values" onchange="if (this.checked) { setDisplay('xml_div', 'none'); setDisplay('values_table', 'block'); }" checked="checked" /><label for="input_values">Values</label>
+	<input type="radio" name="input" id="input_xml" value="xml" onchange="if (this.checked) { setDisplay('xml_div', 'block'); setDisplay('values_table', 'none'); }" /><label for="input_xml">XML</label>
 </div>
 <div id="xml_div" style="display: none">
 	<label for="xml">XML (from Email):</label><br />
-	<textarea rows="60" cols="80" name="xml" id="xml" title="Paste the body of the email as XML"></textarea>
+	<textarea rows="30" cols="80" name="xml" id="xml" title="Paste the body of the email as XML"></textarea>
 </div>
 <table id="values_table">
 <tr>

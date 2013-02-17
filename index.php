@@ -33,6 +33,7 @@ include_once "general.php";
 	<meta charset=utf-8 />
 	<title>Get Wusmap Map</title>
 	<link rel="stylesheet" href="wusmap.css" />
+	<script src="wusmap.js"></script>
 </head>
 <body>
 <h1>Get Wusmap Map</h1>
@@ -44,8 +45,8 @@ include_once "general.php";
 <tr>
 	<td><label>Output:</label></td>
 	<td>
-		<input type="radio" name="output" id="output_iframe" value="iframe" onchange="if (this.checked) { document.getElementById('map_div_id').disabled = true; document.getElementById('map_div_id_tr').style.display = 'none'; }" checked="checked" /><label for="output_script">IFrame</label>
-		<input type="radio" name="output" id="output_script" value="script" onchange="if (this.checked) { document.getElementById('map_div_id').disabled = false; document.getElementById('map_div_id_tr').style.display = 'table-row'; }" /><label for="output_script">Script</label>
+		<input type="radio" name="output" id="output_iframe" value="iframe" onchange="if (this.checked) { setDisabled('map_div_id', true); setDisplay('map_div_id_tr', 'none'); }" checked="checked" /><label for="output_iframe">IFrame</label>
+		<input type="radio" name="output" id="output_script" value="script" onchange="if (this.checked) { setDisabled('map_div_id', false); setDisplay('map_div_id_tr', 'table-row'); }" /><label for="output_script">Script</label>
 	</td>
 </tr>
 <tr>
@@ -79,7 +80,7 @@ while ($asset = $assets->fetch_assoc()) {
 </tr>
 <tr>
 	<td>
-		<input type="checkbox" id="manual_zoom" title="Whether to use auto-zoom or not" onchange="document.getElementById('zoom').disabled = !this.checked; document.getElementById('zoom').style.display = this.checked ? 'table-row' : 'none';" checked="checked" />
+		<input type="checkbox" id="manual_zoom" title="Whether to use auto-zoom or not" onchange="setDisabled('zoom', !this.checked); setDisplay('zoom', this.checked ? 'table-row' : 'none');" checked="checked" />
 		<label for="manual_zoom">Manual Zoom</label>
 	</td>
 	<td><input type="number" min="0" max="20" name="zoom" id="zoom" value="12" title="Zoom of the map when loading (1 to 20)" style="width: 50px" /></td>
@@ -133,14 +134,14 @@ while ($asset = $assets->fetch_assoc()) {
 </tr>
 <tr>
 	<td>
-		<input type="checkbox" id="use_min_date" onchange="var input = document.getElementById('min_date'); if (this.checked) { input.disabled = false; input.style.display='table-row'; } else { input.disabled = true; input.style.display='none'; }" />
+		<input type="checkbox" id="use_min_date" onchange="setDisabled('min_date', !this.checked); setDisplay('min_date', this.checked ? 'table-row' : 'none');" />
 		<label for="use_min_date">Min Date:</label>
 	</td>
 	<td><input type="datetime" name="min_date" id="min_date" disabled="disabled" style="display:none;" title="The start date of the route" /></td>
 </tr>
 <tr>
 	<td>
-		<input type="checkbox" id="use_max_date" onchange="var input = document.getElementById('max_date'); if (this.checked) { input.disabled = false; input.style.display='table-row'; } else { input.disabled = true; input.style.display='none'; }" />
+		<input type="checkbox" id="use_max_date" onchange="setDisabled('max_date', !this.checked); setDisplay('max_date', this.checked ? 'table-row' : 'none');" />
 		<label for="use_max_date">Max Date:</label>
 	</td>
 	<td><input type="datetime" name="max_date" id="max_date" disabled="disabled" style="display:none;" title="The end date of the route" /></td>

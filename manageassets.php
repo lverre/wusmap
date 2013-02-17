@@ -49,6 +49,7 @@ if (isset($_POST['operation'])) {
 	<meta charset=utf-8 />
 	<title>Manage Wusmap Assets</title>
 	<link rel="stylesheet" href="wusmap.css" />
+	<script src="wusmap.js"></script>
 </head>
 <body>
 <h1>Manage Wusmap Assets</h1>
@@ -57,9 +58,9 @@ if (isset($_POST['operation'])) {
 <tr>
 	<td><label>Operation:</label></td>
 	<td>
-		<input type="radio" name="operation" id="operation_add" value="add" onchange="if (this.checked) { document.getElementById('assets_tr').style.display = 'none'; document.getElementById('name_tr').style.display = 'table-row'; document.getElementById('id_tr').style.display = 'table-row'; }" checked="checked" /><label for="operation_add">Add</label>
-		<input type="radio" name="operation" id="operation_edit" value="edit" onchange="if (this.checked) { document.getElementById('assets_tr').style.display = 'table-row'; document.getElementById('name_tr').style.display = 'table-row'; document.getElementById('id_tr').style.display = 'none'; }" /><label for="operation_edit">Edit</label>
-		<input type="radio" name="operation" id="operation_delete" value="delete" onchange="if (this.checked) { document.getElementById('assets_tr').style.display = 'table-row'; document.getElementById('name_tr').style.display = 'none'; document.getElementById('id_tr').style.display = 'none'; }" /><label for="operation_delete">Delete</label>
+		<input type="radio" name="operation" id="operation_add" value="add" onchange="if (this.checked) { setDisplay('assets_tr', 'none'); setDisplay('name_tr', 'table-row'); setDisplay('id_tr', 'table-row'); }" checked="checked" /><label for="operation_add">Add</label>
+		<input type="radio" name="operation" id="operation_edit" value="edit" onchange="if (this.checked) { setDisplay('assets_tr', 'table-row'); setDisplay('name_tr', 'table-row'); setDisplay('id_tr', 'none'); }" /><label for="operation_edit">Edit</label>
+		<input type="radio" name="operation" id="operation_delete" value="delete" onchange="if (this.checked) { setDisplay('assets_tr', 'table-row'); setDisplay('name_tr', 'none'); setDisplay('id_tr', 'none'); }" /><label for="operation_delete">Delete</label>
 	</td>
 </tr>
 <tr id="assets_tr" style="display: none;">
@@ -77,7 +78,7 @@ while ($asset = $assets->fetch_assoc()) {
 </tr>
 <tr id="id_tr">
 	<td><label for="name">Id:</label></td>
-	<td><input type="text" name="id" id="id" title="The id of the asset" /></td>
+	<td><input type="number" name="id" id="id" title="The id of the asset" /></td>
 </tr>
 <tr id="name_tr">
 	<td><label for="name">Name:</label></td>

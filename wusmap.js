@@ -24,7 +24,15 @@
  * @description Scripts
  */
 
- var showninfo;
+var showninfo;
+
+function setDisabled(id, is_disabled) {
+	document.getElementById(id).disabled = is_disabled;
+}
+
+function setDisplay(id, display) {
+	document.getElementById(id).style.display = display;
+}
 
 function createMap(map_div_id, zoom, center_lat, center_lon, navigation_control, mapType_control, scale_control, map_type_id, route_color, route_opacity, route_weight, points) {
 	var map_options = {
