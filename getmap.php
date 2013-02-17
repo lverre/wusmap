@@ -27,7 +27,17 @@
 
 include_once "general.php";
 
-function getMap($map_div_id, $width, $height, $zoom, $center_lat, $center_lon, $navigation_control, $mapType_control, $scale_control, $map_type, $route_color, $route_opacity, $route_weight, $asset_id, $min_date, $max_date) {
+function getMarker($point, $asset) {
+	return "getMarker(map, " 
+		. $point['latitude'] . ", " 
+		. $point['longitude'] . ", '" 
+		. $asset['name'] . "', '" 
+		. $point['time'] . "', " 
+		. $point['heading'] . ", " 
+		. $point['speed'] . ");";
+}
+
+function getMap($map_div_id, $width, $height, $zoom, $center_lat, $center_lon, $navigation_control, $mapType_control, $scale_control, $map_type, $route_color, $route_opacity, $route_weight, $asset_id, $min_date, $max_date, $first_marker, $last_marker, $marker_every) {
 	global $CONFIG;
 	$map_type = "google.maps.MapTypeId." . $map_type;
 	
@@ -50,21 +60,30 @@ function getMap($map_div_id, $width, $height, $zoom, $center_lat, $center_lon, $
 	}
 	
 	$add_points = "";
+	$markers = "";
 	$min_lat = 90;
 	$max_lat = -90;
 	$min_lon = 180;
 	$max_lon = -180;
 	$last_point = null;
+	$index = 0;
 	while ($point = $points->fetch_assoc()) {
 		$last_point = $point;
 		$lat = $point['latitude'];
 		$lon = $point['longitude'];
 		$add_points .= "
 	addPoint(points, " . $lat . ", " . $lon . ");";
+		if (($first_marker && $index == 0) || ($marker_every > 0 && ($index % $marker_every) == 0)) {
+			$markers .= "	" . getMarker($point, $asset) . "\n";
+		}
 		if ($lat < $min_lat) $min_lat = $lat;
 		if ($lat > $max_lat) $max_lat = $lat;
 		if ($lon < $min_lon) $min_lon = $lon;
 		if ($lon > $max_lon) $max_lon = $lon;
+		$index++;
+	}
+	if ($last_marker && !($first_marker && $index == 1) && !($marker_every > 0 && (($index - 1) % $marker_every) == 0)) {
+		$markers .= "	" . getMarker($last_point, $asset) . "\n";
 	}
 	if ($zoom != null) {
 		if ($center_lat == null) {
@@ -97,7 +116,7 @@ function getMap($map_div_id, $width, $height, $zoom, $center_lat, $center_lon, $
 		$map_type, 
 		'$route_color', $route_opacity, $route_weight, points);
 
-	getMarker(map, " . $last_point['latitude'] . ", " . $last_point['longitude'] . ", '" . $asset['name'] . "', '" . $last_point['time'] . "', " . $last_point['heading'] . ", " . $last_point['speed'] . ");
+	$markers
 }
 addEvent(window, 'load', wusmapInit);
 ";
@@ -109,9 +128,9 @@ $height = getOrDefault("height", 500);
 $zoom = getOrDefault("zoom", null);
 $center_lat = getOrDefault("center_lat", null);
 $center_lon = getOrDefault("center_lon", null);
-$navigation_control = getOrDefault("navigation_control", false) == 'on' ? 'true' : 'false';
-$map_type_control = getOrDefault("map_type_control", 1) == 'on' ? 'true' : 'false';
-$scale_control = getOrDefault("scale_control", 1) == 'on' ? 'true' : 'false';
+$navigation_control = getOrDefault("navigation_control", null) == 'on' ? 'true' : 'false';
+$map_type_control = getOrDefault("map_type_control", null) == 'on' ? 'true' : 'false';
+$scale_control = getOrDefault("scale_control", null) == 'on' ? 'true' : 'false';
 $map_type = getOrDefault("map_type", "HYBRID");
 $route_color = getOrDefault("route_color", "green");
 $route_opacity = getOrDefault("route_opacity", 1);
@@ -119,8 +138,11 @@ $route_weight = getOrDefault("route_weight", 2);
 $asset_id = getOrDefault("asset_id", null);
 $min_date = getOrDefault("min_date", null);
 $max_date = getOrDefault("max_date", null);
+$first_marker = getOrDefault("first_marker", null) == 'on';
+$last_marker = getOrDefault("last_marker", null) == 'on';
+$marker_every = getOrDefault("marker_every", 0);
 
-$js = getMap($map_div_id, $width, $height, $zoom, $center_lat, $center_lon, $navigation_control, $map_type_control, $scale_control, $map_type, $route_color, $route_opacity, $route_weight, $asset_id, $min_date, $max_date);
+$js = getMap($map_div_id, $width, $height, $zoom, $center_lat, $center_lon, $navigation_control, $map_type_control, $scale_control, $map_type, $route_color, $route_opacity, $route_weight, $asset_id, $min_date, $max_date, $first_marker, $last_marker, $marker_every);
 
 if (getOrDefault("output", null) != "iframe") {
 	echo $js;

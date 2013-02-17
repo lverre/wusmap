@@ -165,6 +165,31 @@ while ($asset = $assets->fetch_assoc()) {
 	<td><label for="route_weight">Route Weight:</label></td>
 	<td><input type="number" min="0" max="100" name="route_weight" id="route_weight" value="2" title="The width of the route's line (in pixels)" style="width: 50px" /></td>
 </tr>
+<tr>
+	<th colspan="2">Markers</th>
+</tr>
+<tr>
+	<td colspan="2">
+		<input type="checkbox" name="first_marker" id="first_marker" checked="checked" title="Whether to show a marker for the first point or not" />
+		<label for="first_marker">Show First Marker</label></td>
+	</td>
+</tr>
+<tr>
+	<td colspan="2">
+		<input type="checkbox" name="last_marker" id="last_marker" checked="checked" title="Whether to show a marker for the last point or not" />
+		<label for="last_marker">Show Last Marker</label></td>
+	</td>
+</tr>
+<tr>
+	<td>
+		<input type="checkbox" id="use_marker_every" onchange="setDisabled('marker_every', !this.checked); setDisplay('marker_every', this.checked ? 'inline-block' : 'none');" />
+		<label for="use_marker_every">Marker Every:</label>
+	</td>
+	<td>
+		<input type="number" min="1" name="marker_every" id="marker_every" disabled="disabled" value="4" style="display:none;" title="The frequency of markers" />
+		point(s)
+	</td>
+</tr>
 </table>
 </div>
 <div style="float:left; margin: 8px 8px 8px 16px;">
