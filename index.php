@@ -80,10 +80,24 @@ while ($asset = $assets->fetch_assoc()) {
 </tr>
 <tr>
 	<td>
-		<input type="checkbox" id="manual_zoom" title="Whether to use auto-zoom or not" onchange="setDisabled('zoom', !this.checked); setDisplay('zoom', this.checked ? 'table-row' : 'none');" checked="checked" />
+		<input type="checkbox" id="manual_zoom" title="Whether to use auto-zoom or not" onchange="setDisabled('zoom', !this.checked); setDisplay('zoom', this.checked ? 'inline-block' : 'none');" checked="checked" />
 		<label for="manual_zoom">Manual Zoom</label>
 	</td>
 	<td><input type="number" min="0" max="20" name="zoom" id="zoom" value="12" title="Zoom of the map when loading (1 to 20)" style="width: 50px" /></td>
+</tr>
+<tr>
+	<td>
+		<input type="checkbox" id="manual_center" title="Whether to manually set the center of the map or not" onchange="setDisabled('center_lat', !this.checked); setDisplay('center_lat_tr', this.checked ? 'table-row' : 'none'); setDisabled('center_lon', !this.checked); setDisplay('center_lon_tr', this.checked ? 'table-row' : 'none');" />
+		<label for="manual_center">Manual Center</label>
+	</td>
+</tr>
+<tr id="center_lat_tr" style="display: none;">
+	<td><label for="center_lat">Center Latitude:</label></td>
+	<td><input type="number" min="-90" max="90" name="center_lat" id="center_lat" title="In decimal: 42.5 for 45&deg;30'N" style="width: 100px" disabled="disabled" /></td>
+</tr>
+<tr id="center_lon_tr" style="display: none;">
+	<td><label for="center_lon">Center Longitude:</label></td>
+	<td><input type="number" min="-180" max="180" name="center_lon" id="center_lon" title="In decimal: 42.5 for 45&deg;30'E" style="width: 100px" disabled="disabled" /></td>
 </tr>
 <tr>
 	<td colspan="2">
@@ -134,14 +148,14 @@ while ($asset = $assets->fetch_assoc()) {
 </tr>
 <tr>
 	<td>
-		<input type="checkbox" id="use_min_date" onchange="setDisabled('min_date', !this.checked); setDisplay('min_date', this.checked ? 'table-row' : 'none');" />
+		<input type="checkbox" id="use_min_date" onchange="setDisabled('min_date', !this.checked); setDisplay('min_date', this.checked ? 'inline-block' : 'none');" />
 		<label for="use_min_date">Min Date:</label>
 	</td>
 	<td><input type="datetime" name="min_date" id="min_date" disabled="disabled" style="display:none;" title="The start date of the route" /></td>
 </tr>
 <tr>
 	<td>
-		<input type="checkbox" id="use_max_date" onchange="setDisabled('max_date', !this.checked); setDisplay('max_date', this.checked ? 'table-row' : 'none');" />
+		<input type="checkbox" id="use_max_date" onchange="setDisabled('max_date', !this.checked); setDisplay('max_date', this.checked ? 'inline-block' : 'none');" />
 		<label for="use_max_date">Max Date:</label>
 	</td>
 	<td><input type="datetime" name="max_date" id="max_date" disabled="disabled" style="display:none;" title="The end date of the route" /></td>

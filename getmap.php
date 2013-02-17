@@ -27,7 +27,7 @@
 
 include_once "general.php";
 
-function getMap($map_div_id, $width, $height, $zoom, $navigation_control, $mapType_control, $scale_control, $map_type, $route_color, $route_opacity, $route_weight, $asset_id, $min_date, $max_date) {
+function getMap($map_div_id, $width, $height, $zoom, $center_lat, $center_lon, $navigation_control, $mapType_control, $scale_control, $map_type, $route_color, $route_opacity, $route_weight, $asset_id, $min_date, $max_date) {
 	global $CONFIG;
 	$map_type = "google.maps.MapTypeId." . $map_type;
 	
@@ -67,11 +67,15 @@ function getMap($map_div_id, $width, $height, $zoom, $navigation_control, $mapTy
 		if ($lon > $max_lon) $max_lon = $lon;
 	}
 	if ($zoom != null) {
-		$center_lat = $last_point['latitude'];
-		$center_lon = $last_point['longitude'];
+		if ($center_lat == null) {
+			$center_lat = $last_point['latitude'];
+			$center_lon = $last_point['longitude'];
+		}
 	} else {
-		$center_lat = ($max_lat + $min_lat) / 2;
-		$center_lon = ($max_lon + $min_lon) / 2;
+		if ($center_lat == null) {
+			$center_lat = ($max_lat + $min_lat) / 2;
+			$center_lon = ($max_lon + $min_lon) / 2;
+		}
 		
 		$dist = 
 			(6371 * acos(sin($min_lat / 57.2958) * sin($max_lat / 57.2958) + 
@@ -103,6 +107,8 @@ $map_div_id = getOrDefault("map_div_id", "wusmap");
 $width = getOrDefault("width", 500);
 $height = getOrDefault("height", 500);
 $zoom = getOrDefault("zoom", null);
+$center_lat = getOrDefault("center_lat", null);
+$center_lon = getOrDefault("center_lon", null);
 $navigation_control = getOrDefault("navigation_control", false) == 'on' ? 'true' : 'false';
 $map_type_control = getOrDefault("map_type_control", 1) == 'on' ? 'true' : 'false';
 $scale_control = getOrDefault("scale_control", 1) == 'on' ? 'true' : 'false';
@@ -114,7 +120,7 @@ $asset_id = getOrDefault("asset_id", null);
 $min_date = getOrDefault("min_date", null);
 $max_date = getOrDefault("max_date", null);
 
-$js = getMap($map_div_id, $width, $height, $zoom, $navigation_control, $map_type_control, $scale_control, $map_type, $route_color, $route_opacity, $route_weight, $asset_id, $min_date, $max_date);
+$js = getMap($map_div_id, $width, $height, $zoom, $center_lat, $center_lon, $navigation_control, $map_type_control, $scale_control, $map_type, $route_color, $route_opacity, $route_weight, $asset_id, $min_date, $max_date);
 
 if (getOrDefault("output", null) != "iframe") {
 	echo $js;
