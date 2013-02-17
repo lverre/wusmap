@@ -48,11 +48,12 @@ if (isset($_POST['operation'])) {
 <head>
 	<meta charset=utf-8 />
 	<title>Manage Wusmap Assets</title>
+	<link rel="stylesheet" href="wusmap.css" />
 </head>
 <body>
 <h1>Manage Wusmap Assets</h1>
 <form method="post">
-<table style="border:0;">
+<table>
 <tr>
 	<td><label>Operation:</label></td>
 	<td>

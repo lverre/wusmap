@@ -32,11 +32,12 @@ include_once "general.php";
 <head>
 	<meta charset=utf-8 />
 	<title>Get Wusmap Map</title>
+	<link rel="stylesheet" href="wusmap.css" />
 </head>
 <body>
 <h1>Get Wusmap Map</h1>
 <form method="get" action="getmap.php">
-<table style="border:0;">
+<table>
 <tr>
 	<th colspan="2">General</th>
 </tr>
@@ -77,24 +78,29 @@ while ($asset = $assets->fetch_assoc()) {
 	<td><input type="number" name="height" id="height" value="500" title="Height of the map (eg. 100%, 600px, ...)" style="width: 50px" /></td>
 </tr>
 <tr>
-	<td>Auto Zoom</td>
-	<td><input type="checkbox" title="Whether to use auto-zoom or not" onchange="document.getElementById('zoom').disabled = this.checked; document.getElementById('zoom_tr').style.display = this.checked ? 'none' : 'table-row';" /></td>
-</tr>
-<tr id="zoom_tr">
-	<td><label for="zoom">Zoom:</label></td>
+	<td>
+		<input type="checkbox" id="manual_zoom" title="Whether to use auto-zoom or not" onchange="document.getElementById('zoom').disabled = !this.checked; document.getElementById('zoom').style.display = this.checked ? 'table-row' : 'none';" checked="checked" />
+		<label for="manual_zoom">Manual Zoom</label>
+	</td>
 	<td><input type="number" min="0" max="20" name="zoom" id="zoom" value="12" title="Zoom of the map when loading (1 to 20)" style="width: 50px" /></td>
 </tr>
 <tr>
-	<td>Navigation Control</td>
-	<td><input type="checkbox" name="navigation_control" checked="checked" title="Whether to show the navigation control in the map or not" /></td>
+	<td colspan="2">
+		<input type="checkbox" name="navigation_control" id="navigation_control" checked="checked" title="Whether to show the navigation control in the map or not" />
+		<label for="navigation_control">Navigation Control</label></td>
+	</td>
 </tr>
 <tr>
-	<td>Map Type Control</td>
-	<td><input type="checkbox" name="map_type_control" checked="checked" title="Whether to show the map type control in the map or not" /></td>
+	<td colspan="2">
+		<input type="checkbox" name="map_type_control" id="map_type_control" checked="checked" title="Whether to show the map type control in the map or not" />
+		<label for="map_type_control">Map Type Control</label></td>
+	</td>
 </tr>
 <tr>
-	<td>Scale Control</td>
-	<td><input type="checkbox" name="scale_control" checked="checked" title="Whether to show the scale control in the map or not" /></td>
+	<td colspan="2">
+		<input type="checkbox" name="scale_control" id="scale_control" checked="checked" title="Whether to show the scale control in the map or not" />
+		<label for="scale_control">Scale Control</label>
+	</td>
 </tr>
 <tr>
 	<td><label for="map_type">Map Type:</label></td>
@@ -127,15 +133,15 @@ while ($asset = $assets->fetch_assoc()) {
 </tr>
 <tr>
 	<td>
-		<input type="checkbox" onchange="var input = document.getElementById('min_date'); if (this.checked) { input.disabled = false; input.style.display='table-row'; } else { input.disabled = true; input.style.display='none'; }" />
-		<label for="min_date">Min Date:</label>
+		<input type="checkbox" id="use_min_date" onchange="var input = document.getElementById('min_date'); if (this.checked) { input.disabled = false; input.style.display='table-row'; } else { input.disabled = true; input.style.display='none'; }" />
+		<label for="use_min_date">Min Date:</label>
 	</td>
 	<td><input type="datetime" name="min_date" id="min_date" disabled="disabled" style="display:none;" title="The start date of the route" /></td>
 </tr>
 <tr>
 	<td>
-		<input type="checkbox" onchange="var input = document.getElementById('max_date'); if (this.checked) { input.disabled = false; input.style.display='table-row'; } else { input.disabled = true; input.style.display='none'; }" />
-		<label for="max_date">Max Date:</label>
+		<input type="checkbox" id="use_max_date" onchange="var input = document.getElementById('max_date'); if (this.checked) { input.disabled = false; input.style.display='table-row'; } else { input.disabled = true; input.style.display='none'; }" />
+		<label for="use_max_date">Max Date:</label>
 	</td>
 	<td><input type="datetime" name="max_date" id="max_date" disabled="disabled" style="display:none;" title="The end date of the route" /></td>
 </tr>

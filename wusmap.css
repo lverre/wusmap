@@ -47,3 +47,30 @@
 .wusmap-infobox-description-value {
     /* font-weight: bold; */
 }
+
+body {
+	font-family: Trebuchet, Helvetica, sans-serif;
+}
+
+h1, h2 {
+	margin-left: 2em;
+	margin-top: .25em;
+	margin-bottom: .25em;
+}
+
+h1 {
+    font-size: 1.5em;
+}
+
+table {
+	border:0;
+}
+
+table th {
+    font-size: 1.2em;
+	text-align: left;
+}
+
+form input[type="checkbox"] {
+	margin-left: 0px;
+}

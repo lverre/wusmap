@@ -64,6 +64,7 @@ if (isset($_REQUEST['input'])) {
 <head>
 	<meta charset=utf-8 />
 	<title>Manually Add A Point</title>
+	<link rel="stylesheet" href="wusmap.css" />
 </head>
 <body>
 <h1>Manually Add A Point</h1>
@@ -76,7 +77,7 @@ if (isset($_REQUEST['input'])) {
 	<label for="xml">XML (from Email):</label><br />
 	<textarea rows="60" cols="80" name="xml" id="xml" title="Paste the body of the email as XML"></textarea>
 </div>
-<table id="values_table" style="border:0">
+<table id="values_table">
 <tr>
 	<td><label for="asset_id">Asset:</label></td>
 	<td>
@@ -92,11 +93,11 @@ while ($asset = $assets->fetch_assoc()) {
 </tr>
 <tr>
 	<td><label for="latitude">Latitude:</label></td>
-	<td><input type="number" min="-90" max="90" name="latitude" id="latitude" title="In decimal: 42.5 for 45&deg;30'N" /></td>
+	<td><input type="number" min="-90" max="90" name="latitude" id="latitude" title="In decimal: 42.5 for 45&deg;30'N" style="width: 100px" /></td>
 </tr>
 <tr>
 	<td><label for="longitude">Longitude:</label></td>
-	<td><input type="number" min="-180" max="180" name="longitude" id="longitude" title="In decimal: 42.5 for 45&deg;30'E" /></td>
+	<td><input type="number" min="-180" max="180" name="longitude" id="longitude" title="In decimal: 42.5 for 45&deg;30'E" style="width: 100px" /></td>
 </tr>
 <tr>
 	<td><label for="datetime">Date &amp; Time:</label></td>
@@ -104,11 +105,11 @@ while ($asset = $assets->fetch_assoc()) {
 </tr>
 <tr>
 	<td><label for="heading">Heading:</label></td>
-	<td><input type="number" min="0" max="360" name="heading" id="heading" title="In degree, in decimal, e.g. 265.7" /></td>
+	<td><input type="number" min="0" max="360" name="heading" id="heading" title="In degree, in decimal, e.g. 265.7" style="width: 50px" /></td>
 </tr>
 <tr>
 	<td><label for="speed">Speed:</label></td>
-	<td><input type="number" min="0" name="speed" id="speed" title="In knots, in decimal, e.g. 5.2" /></td>
+	<td><input type="number" min="0" name="speed" id="speed" title="In knots, in decimal, e.g. 5.2" style="width: 50px" /></td>
 </tr>
 </table>
 <input type="submit" value="Submit" />

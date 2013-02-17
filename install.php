@@ -132,7 +132,8 @@ speed decimal(8,5)
 <head>
 	<meta charset=utf-8 />
 	<title>Wusmap Install</title>
-	</head>
+	<link rel="stylesheet" href="wusmap.css" />
+</head>
 <body>
 <h1>Wusmap Install</h1>
 <?php
@@ -147,8 +148,10 @@ if (isset($_POST["db_name"])) {
 }
 ?>
 <form method='post'>
-Please, enter the configuration for the database:
-<table style="border:0;">
+<table>
+<tr>
+	<th colspan="2">Database Configuration</th>
+</tr>
 <tr>
 	<td><label for="name">Database Name:</label></td>
 	<td><input type="text" name="db_name" id="name" title="The name of the database."></td>
@@ -169,10 +172,9 @@ Please, enter the configuration for the database:
 	<td><label for="prefix">Tables Prefix:</label></td>
 	<td><input type="text" name="db_prefix" id="prefix" value="wusmap_" title="A prefix for the wusmap tables"></td>
 </tr>
-</table>
-<br />
-Please, enter the configuration for the e-mail address:
-<table style="border:0;">
+<tr>
+	<th colspan="2">Email Address Configuration</th>
+</tr>
 <tr>
 	<td><label for="email_host">Imap Server:</label></td>
 	<td><input type="text" name="email_host" id="email_host" title="The server name to access the email address."></td>
@@ -190,7 +192,6 @@ Please, enter the configuration for the e-mail address:
 	<td><input type="password" name="email_pwd" id="email_pwd" title="The user's password"></td>
 </tr>
 </table>
-<br />
 <input type='submit' value='Submit' />
 </form>
 </body>
