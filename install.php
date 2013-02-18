@@ -20,7 +20,7 @@
 
 /**
  * @package Wusmap
- * @version 0.1
+ * @version 1.0
  * @author Laurian Verre
  * @description Creates the database.
  */
@@ -49,7 +49,7 @@ function createConfig() {
 
 /**
  * @package Wusmap
- * @version 0.1
+ * @version 1.0
  * @author Laurian Verre
  * @description Configuration file.
  */

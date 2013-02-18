@@ -20,7 +20,7 @@
 
 /**
  * @package Wusmap
- * @version 0.1
+ * @version 1.0
  * @author Laurian Verre
  * @description Check the emails.
  */
