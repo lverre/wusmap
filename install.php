@@ -141,11 +141,10 @@ if (isset($_POST["db_name"])) {
 	echo "<div>\nResult:\n<ul>\n";
 	echo "<li>" . createConfig() . "</li>\n";
 	echo "<li>" . createTables() . "</li>\n";
+	echo "<li>change rights for this file: " . (unlink("install.php") ? "success" : "failure") . "</li>\n";
 	echo "</ul>\n";
 	echo "<a href='manageassets.php'>Add an asset (boat)</a>\n</div>";
 } else {
-	
-}
 ?>
 <form method='post'>
 <table>
@@ -194,5 +193,8 @@ if (isset($_POST["db_name"])) {
 </table>
 <input type='submit' value='Submit' />
 </form>
+<?php	
+}
+?>
 </body>
 </html>
