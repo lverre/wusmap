@@ -87,7 +87,7 @@ while ($asset = $assets->fetch_assoc()) {
 	<td><input type="number" min="0" max="20" name="zoom" id="zoom" value="12" title="Zoom of the map when loading (1 to 20)" style="width: 50px" /></td>
 </tr>
 <tr>
-	<td>
+	<td colspan="2">
 		<input type="checkbox" id="manual_center" title="Whether to manually set the center of the map or not" onchange="setDisabled('center_lat', !this.checked); setDisplay('center_lat_tr', this.checked ? 'table-row' : 'none'); setDisabled('center_lon', !this.checked); setDisplay('center_lon_tr', this.checked ? 'table-row' : 'none');" />
 		<label for="manual_center">Manual Center</label>
 	</td>
@@ -114,13 +114,13 @@ while ($asset = $assets->fetch_assoc()) {
 <tr>
 	<td colspan="2">
 		<input type="checkbox" name="navigation_control" id="navigation_control" checked="checked" title="Whether to show the navigation control in the map or not" />
-		<label for="navigation_control">Navigation Control</label></td>
+		<label for="navigation_control">Navigation Control</label>
 	</td>
 </tr>
 <tr>
 	<td colspan="2">
 		<input type="checkbox" name="map_type_control" id="map_type_control" checked="checked" title="Whether to show the map type control in the map or not" />
-		<label for="map_type_control">Map Type Control</label></td>
+		<label for="map_type_control">Map Type Control</label>
 	</td>
 </tr>
 <tr>
@@ -171,13 +171,13 @@ while ($asset = $assets->fetch_assoc()) {
 <tr>
 	<td colspan="2">
 		<input type="checkbox" name="first_marker" id="first_marker" checked="checked" title="Whether to show a marker for the first point or not" />
-		<label for="first_marker">Show First Marker</label></td>
+		<label for="first_marker">Show First Marker</label>
 	</td>
 </tr>
 <tr>
 	<td colspan="2">
 		<input type="checkbox" name="last_marker" id="last_marker" checked="checked" title="Whether to show a marker for the last point or not" />
-		<label for="last_marker">Show Last Marker</label></td>
+		<label for="last_marker">Show Last Marker</label>
 	</td>
 </tr>
 <tr>
