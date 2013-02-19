@@ -162,6 +162,7 @@ if (getOrDefault("output", null) != "iframe") {
 </head>
 <body>
 	<div id="wusmap"></div>
+	<div style="clear:both; font-size:0.8em; font-style:italic;">This map is powered by <a href="http://lverre.github.com/wusmap">wusmap</a>.</div>
 </body>
 </html>
 <?php
