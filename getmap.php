@@ -28,16 +28,14 @@
 include_once "general.php";
 
 function getMarker($point, $asset) {
-	return "getMarker(map, " 
-		. $point['latitude'] . ", " 
-		. $point['longitude'] . ", '" 
-		. $asset['name'] . "', '" 
-		. $point['time'] . "', " 
-		. $point['heading'] . ", " 
-		. $point['speed'] . ");";
+	return getMarker2("'" . $asset['name'] . "'", $point['latitude'], $point['longitude'], "'" . $point['time'] . "'", $point['heading'], $point['speed']);
 }
 
-function getMap($map_div_id, $width, $height, $zoom, $center_lat, $center_lon, $navigation_control, $mapType_control, $scale_control, $map_type, $route_color, $route_opacity, $route_weight, $asset_id, $min_date, $max_date, $first_marker, $last_marker, $marker_every) {
+function getMarker2($name, $lat, $lon, $time, $heading, $speed) {
+	return "getMarker(map, $lat, $lon, $name, $time, $heading, $speed);";
+}
+
+function getMap($map_div_id, $width, $height, $zoom, $center_lat, $center_lon, $navigation_control, $mapType_control, $scale_control, $map_type, $route_color, $route_opacity, $route_weight, $asset_id, $min_date, $max_date, $first_marker, $last_marker, $marker_every, $dest_show, $dest_name, $dest_lat, $dest_lon) {
 	global $CONFIG;
 	$map_type = "google.maps.MapTypeId." . $map_type;
 	
@@ -65,6 +63,13 @@ function getMap($map_div_id, $width, $height, $zoom, $center_lat, $center_lon, $
 	$max_lat = -90;
 	$min_lon = 180;
 	$max_lon = -180;
+	if ($dest_show) {
+		if ($dest_lat < $min_lat) $min_lat = $dest_lat;
+		if ($dest_lat > $max_lat) $max_lat = $dest_lat;
+		if ($dest_lon < $min_lon) $min_lon = $dest_lon;
+		if ($dest_lon > $max_lon) $max_lon = $dest_lon;
+		$markers .= getMarker2("'" . $dest_name . "'", $dest_lat, $dest_lon, "null", "null", "null") . "\n";
+	}
 	$last_point = null;
 	$index = 0;
 	while ($point = $points->fetch_assoc()) {
@@ -85,6 +90,7 @@ function getMap($map_div_id, $width, $height, $zoom, $center_lat, $center_lon, $
 	if ($last_marker && !($first_marker && $index == 1) && !($marker_every > 0 && (($index - 1) % $marker_every) == 0)) {
 		$markers .= "	" . getMarker($last_point, $asset) . "\n";
 	}
+	
 	if ($zoom != null) {
 		if ($center_lat == null) {
 			$center_lat = $last_point['latitude'];
@@ -141,8 +147,12 @@ $max_date = getOrDefault("max_date", null);
 $first_marker = getOrDefault("first_marker", null) == 'on';
 $last_marker = getOrDefault("last_marker", null) == 'on';
 $marker_every = getOrDefault("marker_every", 0);
+$dest_show = getOrDefault("destination_show", null) == 'on';
+$dest_name = getOrDefault("destination_name", "Destination");
+$dest_lat = getOrDefault("destination_lat", null);
+$dest_lon = getOrDefault("destination_lon", null);
 
-$js = getMap($map_div_id, $width, $height, $zoom, $center_lat, $center_lon, $navigation_control, $map_type_control, $scale_control, $map_type, $route_color, $route_opacity, $route_weight, $asset_id, $min_date, $max_date, $first_marker, $last_marker, $marker_every);
+$js = getMap($map_div_id, $width, $height, $zoom, $center_lat, $center_lon, $navigation_control, $map_type_control, $scale_control, $map_type, $route_color, $route_opacity, $route_weight, $asset_id, $min_date, $max_date, $first_marker, $last_marker, $marker_every, $dest_show, $dest_name, $dest_lat, $dest_lon);
 
 if (getOrDefault("output", null) != "iframe") {
 	echo $js;
