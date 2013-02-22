@@ -94,11 +94,11 @@ while ($asset = $assets->fetch_assoc()) {
 </tr>
 <tr>
 	<td><label for="latitude">Latitude:</label></td>
-	<td><input type="number" min="-90" max="90" name="latitude" id="latitude" title="In decimal: 42.5 for 45&deg;30'N" style="width: 100px" /></td>
+	<td><input type="number" step="0.00001" min="-90" max="90" name="latitude" id="latitude" title="In decimal: 42.5 for 45&deg;30'N" style="width: 100px" /></td>
 </tr>
 <tr>
 	<td><label for="longitude">Longitude:</label></td>
-	<td><input type="number" min="-180" max="180" name="longitude" id="longitude" title="In decimal: 42.5 for 45&deg;30'E" style="width: 100px" /></td>
+	<td><input type="number" step="0.00001" min="-180" max="180" name="longitude" id="longitude" title="In decimal: 42.5 for 45&deg;30'E" style="width: 100px" /></td>
 </tr>
 <tr>
 	<td><label for="datetime">Date &amp; Time:</label></td>
@@ -106,11 +106,11 @@ while ($asset = $assets->fetch_assoc()) {
 </tr>
 <tr>
 	<td><label for="heading">Heading:</label></td>
-	<td><input type="number" min="0" max="360" name="heading" id="heading" title="In degree, in decimal, e.g. 265.7" style="width: 50px" /></td>
+	<td><input type="number" step="0.01" min="0" max="360" name="heading" id="heading" title="In degree, in decimal, e.g. 265.7" style="width: 50px" /></td>
 </tr>
 <tr>
 	<td><label for="speed">Speed:</label></td>
-	<td><input type="number" min="0" name="speed" id="speed" title="In knots, in decimal, e.g. 5.2" style="width: 50px" /></td>
+	<td><input type="number" step="0.01" min="0" name="speed" id="speed" title="In knots, in decimal, e.g. 5.2" style="width: 50px" /></td>
 </tr>
 </table>
 <input type="submit" value="Submit" />
