@@ -206,15 +206,15 @@ function getMarker(map, latitude, longitude, asset, time, heading, speed, dist_t
 }
 
 function coordToString(coord, is_lat) {
+	var is_neg = coord < 0;
+	if (is_neg) {
+		coord = 0 - coord;
+	}
 	var deg = Math.floor(coord);
 	coord = (coord - deg) * 60;
 	var min = Math.floor(coord);
 	coord = (coord - min) * 60;
 	var sec = Math.floor(coord);
-	var is_neg = deg < 0;
-	if (is_neg) {
-		deg = 0 - deg;
-	}
 	var card = is_lat ? (is_neg ? "S" : "N") : (is_neg ? "W" : "E");
 	return deg + "&deg;" + min + "'" + sec + "'' " + card;
 }
