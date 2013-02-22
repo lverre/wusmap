@@ -50,7 +50,7 @@ function addPoint(points, latitude, longitude) {
 	points.push(new google.maps.LatLng(latitude, longitude));
 }
 
-function getMarker(map, latitude, longitude, asset, time, heading, speed) {
+function getMarker(map, latitude, longitude, asset, time, heading, speed, dist_to_prev, avg_speed_since_prev, dist_to_dest, eta, remaining) {
     heading = typeof(heading) != 'undefined' ? heading : null;
     speed = typeof(speed) != 'undefined' ? speed : null;
 	
@@ -131,6 +131,66 @@ function getMarker(map, latitude, longitude, asset, time, heading, speed) {
 		boxTextDescriptionTableRow.appendChild(boxTextDescriptionTableCol);
 		boxTextDescriptionTable.appendChild(boxTextDescriptionTableRow);
 	}
+	if (dist_to_prev != null) {
+		boxTextDescriptionTableRow = document.createElement("tr");
+		boxTextDescriptionTableCol = document.createElement("td");
+		boxTextDescriptionTableCol.className = "wusmap-infobox-description-key";
+		boxTextDescriptionTableCol.innerHTML = "Since last point:";
+		boxTextDescriptionTableRow.appendChild(boxTextDescriptionTableCol);
+		boxTextDescriptionTableCol = document.createElement("td");
+		boxTextDescriptionTableCol.className = "wusmap-infobox-description-value";
+		boxTextDescriptionTableCol.innerHTML = dist_to_prev + " M";
+		boxTextDescriptionTableRow.appendChild(boxTextDescriptionTableCol);
+		boxTextDescriptionTable.appendChild(boxTextDescriptionTableRow);
+	}
+	if (avg_speed_since_prev != null) {
+		boxTextDescriptionTableRow = document.createElement("tr");
+		boxTextDescriptionTableCol = document.createElement("td");
+		boxTextDescriptionTableCol.className = "wusmap-infobox-description-key";
+		boxTextDescriptionTableCol.innerHTML = "Average speed:";
+		boxTextDescriptionTableRow.appendChild(boxTextDescriptionTableCol);
+		boxTextDescriptionTableCol = document.createElement("td");
+		boxTextDescriptionTableCol.className = "wusmap-infobox-description-value";
+		boxTextDescriptionTableCol.innerHTML = avg_speed_since_prev + " kts";
+		boxTextDescriptionTableRow.appendChild(boxTextDescriptionTableCol);
+		boxTextDescriptionTable.appendChild(boxTextDescriptionTableRow);
+	}
+	if (dist_to_dest != null) {
+		boxTextDescriptionTableRow = document.createElement("tr");
+		boxTextDescriptionTableCol = document.createElement("td");
+		boxTextDescriptionTableCol.className = "wusmap-infobox-description-key";
+		boxTextDescriptionTableCol.innerHTML = "To destination:";
+		boxTextDescriptionTableRow.appendChild(boxTextDescriptionTableCol);
+		boxTextDescriptionTableCol = document.createElement("td");
+		boxTextDescriptionTableCol.className = "wusmap-infobox-description-value";
+		boxTextDescriptionTableCol.innerHTML = dist_to_dest + " M";
+		boxTextDescriptionTableRow.appendChild(boxTextDescriptionTableCol);
+		boxTextDescriptionTable.appendChild(boxTextDescriptionTableRow);
+	}
+	if (remaining != null) {
+		boxTextDescriptionTableRow = document.createElement("tr");
+		boxTextDescriptionTableCol = document.createElement("td");
+		boxTextDescriptionTableCol.className = "wusmap-infobox-description-key";
+		boxTextDescriptionTableCol.innerHTML = "Remaining:";
+		boxTextDescriptionTableRow.appendChild(boxTextDescriptionTableCol);
+		boxTextDescriptionTableCol = document.createElement("td");
+		boxTextDescriptionTableCol.className = "wusmap-infobox-description-value";
+		boxTextDescriptionTableCol.innerHTML = remaining;
+		boxTextDescriptionTableRow.appendChild(boxTextDescriptionTableCol);
+		boxTextDescriptionTable.appendChild(boxTextDescriptionTableRow);
+	}
+	if (eta != null) {
+		boxTextDescriptionTableRow = document.createElement("tr");
+		boxTextDescriptionTableCol = document.createElement("td");
+		boxTextDescriptionTableCol.className = "wusmap-infobox-description-key";
+		boxTextDescriptionTableCol.innerHTML = "ETA:";
+		boxTextDescriptionTableRow.appendChild(boxTextDescriptionTableCol);
+		boxTextDescriptionTableCol = document.createElement("td");
+		boxTextDescriptionTableCol.className = "wusmap-infobox-description-value";
+		boxTextDescriptionTableCol.innerHTML = eta;
+		boxTextDescriptionTableRow.appendChild(boxTextDescriptionTableCol);
+		boxTextDescriptionTable.appendChild(boxTextDescriptionTableRow);
+	}
     boxTextDescription.appendChild(boxTextDescriptionTable);
     boxText.appendChild(boxTextDescription);
 	
@@ -175,7 +235,7 @@ var infoOptions = {
     disableAutoPan: false
     ,boxStyle: { 
 	opacity: 0.9
-	,width: "240px"
+	,width: "300px"
     }
     ,pixelOffset: new google.maps.Size(-120, 0)
     ,enableEventPropagation: true

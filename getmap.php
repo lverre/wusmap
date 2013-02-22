@@ -27,12 +27,47 @@
 
 include_once "general.php";
 
-function getMarker($point, $asset) {
-	return getMarker2("'" . $asset['name'] . "'", $point['latitude'], $point['longitude'], "'" . $point['time'] . "'", $point['heading'], $point['speed']);
+function getDist($lat1, $lon1, $lat2, $lon2) {
+	$theta = $lon1 - $lon2;
+	$arc = acos(sin(deg2rad($lat1)) * sin(deg2rad($lat2)) +  cos(deg2rad($lat1)) * cos(deg2rad($lat2)) * cos(deg2rad($theta)));
+	return $arc * 3440.0696544276457883369330453564;// Earth radius in nautical mile
 }
 
-function getMarker2($name, $lat, $lon, $time, $heading, $speed) {
-	return "getMarker(map, $lat, $lon, $name, $time, $heading, $speed);";
+function getMarker($asset, $point, $prev_point, $dest_lat, $dest_lon) {
+	$now = strtotime($point['time']);
+	
+	$dist_to_prev = "null";
+	$avg_speed_since_prev = "null";
+	if ($prev_point != null) {
+		$dist_to_prev = getDist($point['latitude'], $point['longitude'], $prev_point['latitude'], $prev_point['longitude']);
+		$interval = $now - strtotime($prev_point['time']);
+		$avg_speed_since_prev = round($dist_to_prev / ($interval / 3600), 1);
+		$dist_to_prev = round($dist_to_prev, 1);
+	}
+	
+	$dist_to_dest = "null";
+	$eta = "null";
+	$remaining = "null";
+	if ($dest_lat != null && $dest_lon != null) {
+		$dist_to_dest = getDist($point['latitude'], $point['longitude'], $dest_lat, $dest_lon);
+		if ($point['speed'] > 0) {
+			$remaining_seconds = round(($dist_to_dest / $point['speed']) * 3600);
+			$eta = "'" . date("Y-M-d H:m:s", $now + $remaining_seconds) . "'";
+			$days = floor($remaining_seconds / 86400);
+			$remaining_seconds -= $days * 86400;
+			$hours = floor($remaining_seconds / 3600);
+			$remaining_seconds -= $hours * 3600;
+			$minutes = round($remaining_seconds / 60);
+			$remaining = "'$days day(s) $hours hour(s) $minutes minute(s)'";
+		}
+		$dist_to_dest = round($dist_to_dest, 1);
+	}
+	
+	return getMarker2("'" . $asset['name'] . "'", $point['latitude'], $point['longitude'], "'" . $point['time'] . "'", $point['heading'], $point['speed'], $dist_to_prev, $avg_speed_since_prev, $dist_to_dest, $eta, $remaining);
+}
+
+function getMarker2($name, $lat, $lon, $time, $heading, $speed, $dist_to_prev, $avg_speed_since_prev, $dist_to_dest, $eta, $remaining) {
+	return "getMarker(map, $lat, $lon, $name, $time, $heading, $speed, $dist_to_prev, $avg_speed_since_prev, $dist_to_dest, $eta, $remaining);";
 }
 
 function getMap($map_div_id, $width, $height, $zoom, $center_lat, $center_lon, $navigation_control, $mapType_control, $scale_control, $map_type, $route_color, $route_opacity, $route_weight, $asset_id, $min_date, $max_date, $first_marker, $last_marker, $marker_every, $dest_show, $dest_name, $dest_lat, $dest_lon) {
@@ -68,18 +103,24 @@ function getMap($map_div_id, $width, $height, $zoom, $center_lat, $center_lon, $
 		if ($dest_lat > $max_lat) $max_lat = $dest_lat;
 		if ($dest_lon < $min_lon) $min_lon = $dest_lon;
 		if ($dest_lon > $max_lon) $max_lon = $dest_lon;
-		$markers .= getMarker2("'" . $dest_name . "'", $dest_lat, $dest_lon, "null", "null", "null") . "\n";
+		$markers .= getMarker2("'" . $dest_name . "'", $dest_lat, $dest_lon, "null", "null", "null", "null", "null", "null", "null", "null") . "\n";
+	} else {
+		// Just in case...
+		$dest_lat = null;
+		$dest_lon = null;
 	}
 	$last_point = null;
+	$prev_point = null;
 	$index = 0;
 	while ($point = $points->fetch_assoc()) {
+		$prev_point = $last_point;
 		$last_point = $point;
 		$lat = $point['latitude'];
 		$lon = $point['longitude'];
 		$add_points .= "
 	addPoint(points, " . $lat . ", " . $lon . ");";
 		if (($first_marker && $index == 0) || ($marker_every > 0 && ($index % $marker_every) == 0)) {
-			$markers .= "	" . getMarker($point, $asset) . "\n";
+			$markers .= "	" . getMarker($asset, $point, $prev_point, $dest_lat, $dest_lon) . "\n";
 		}
 		if ($lat < $min_lat) $min_lat = $lat;
 		if ($lat > $max_lat) $max_lat = $lat;
@@ -88,7 +129,7 @@ function getMap($map_div_id, $width, $height, $zoom, $center_lat, $center_lon, $
 		$index++;
 	}
 	if ($last_marker && !($first_marker && $index == 1) && !($marker_every > 0 && (($index - 1) % $marker_every) == 0)) {
-		$markers .= "	" . getMarker($last_point, $asset) . "\n";
+		$markers .= "	" . getMarker($asset, $last_point, $prev_point, $dest_lat, $dest_lon) . "\n";
 	}
 	
 	if ($zoom != null) {
