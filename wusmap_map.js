@@ -183,7 +183,7 @@ function getMarker(map, latitude, longitude, asset, time, heading, speed, dist_t
 		boxTextDescriptionTableRow = document.createElement("tr");
 		boxTextDescriptionTableCol = document.createElement("td");
 		boxTextDescriptionTableCol.className = "wusmap-infobox-description-key";
-		boxTextDescriptionTableCol.innerHTML = "ETA:";
+		boxTextDescriptionTableCol.innerHTML = "<span title='Estimated Time of Arrival: this is an *estimation* based on caluculation and not on weather or sea conditions...'>ETA<sup>?</sup></span>:";
 		boxTextDescriptionTableRow.appendChild(boxTextDescriptionTableCol);
 		boxTextDescriptionTableCol = document.createElement("td");
 		boxTextDescriptionTableCol.className = "wusmap-infobox-description-value";

@@ -35,6 +35,7 @@ function getDist($lat1, $lon1, $lat2, $lon2) {
 
 function getMarker($asset, $point, $prev_point, $dest_lat, $dest_lon) {
 	$now = strtotime($point['time']);
+	$speed = $point['speed'];
 	
 	$dist_to_prev = "null";
 	$avg_speed_since_prev = "null";
@@ -42,6 +43,7 @@ function getMarker($asset, $point, $prev_point, $dest_lat, $dest_lon) {
 		$dist_to_prev = getDist($point['latitude'], $point['longitude'], $prev_point['latitude'], $prev_point['longitude']);
 		$interval = $now - strtotime($prev_point['time']);
 		$avg_speed_since_prev = round($dist_to_prev / ($interval / 3600), 1);
+		$speed = $avg_speed_since_prev;
 		$dist_to_prev = round($dist_to_prev, 1);
 	}
 	
@@ -51,19 +53,17 @@ function getMarker($asset, $point, $prev_point, $dest_lat, $dest_lon) {
 	if ($dest_lat != null && $dest_lon != null) {
 		$dist_to_dest = getDist($point['latitude'], $point['longitude'], $dest_lat, $dest_lon);
 		if ($point['speed'] > 0) {
-			$remaining_seconds = round(($dist_to_dest / $point['speed']) * 3600);
-			$eta = "'" . date("Y-M-d H:m:s", $now + $remaining_seconds) . "'";
+			$remaining_seconds = round(($dist_to_dest / $speed) * 3600);
+			$eta = "'" . date("Y-m-d H:i:s", $now + $remaining_seconds) . "'";
 			$days = floor($remaining_seconds / 86400);
 			$remaining_seconds -= $days * 86400;
-			$hours = floor($remaining_seconds / 3600);
-			$remaining_seconds -= $hours * 3600;
-			$minutes = round($remaining_seconds / 60);
-			$remaining = "'$days day(s) $hours hour(s) $minutes minute(s)'";
+			$hours = round($remaining_seconds / 3600);
+			$remaining = "'$days day(s) $hours hour(s)'";
 		}
 		$dist_to_dest = round($dist_to_dest, 1);
 	}
 	
-	return getMarker2("'" . $asset['name'] . "'", $point['latitude'], $point['longitude'], "'" . $point['time'] . "'", $point['heading'], $point['speed'], $dist_to_prev, $avg_speed_since_prev, $dist_to_dest, $eta, $remaining);
+	return getMarker2("'" . $asset['name'] . "'", $point['latitude'], $point['longitude'], "'" . date("Y-m-d H:i:s", $now) . "'", $point['heading'], $point['speed'], $dist_to_prev, $avg_speed_since_prev, $dist_to_dest, $eta, $remaining);
 }
 
 function getMarker2($name, $lat, $lon, $time, $heading, $speed, $dist_to_prev, $avg_speed_since_prev, $dist_to_dest, $eta, $remaining) {
