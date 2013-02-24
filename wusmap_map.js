@@ -50,11 +50,7 @@ function addPoint(points, latitude, longitude) {
 	points.push(new google.maps.LatLng(latitude, longitude));
 }
 
-function getMarker(map, latitude, longitude, asset, time, heading, speed, dist_to_prev, avg_speed_since_prev, dist_to_dest, eta, remaining) {
-    heading = typeof(heading) != 'undefined' ? heading : null;
-    speed = typeof(speed) != 'undefined' ? speed : null;
-	
-	var title = time != null ? asset + " at " + time : asset;
+function getMarker(map, latitude, longitude, name, title, content) {
     var marker = new google.maps.Marker({
 	    position: new google.maps.LatLng(latitude, longitude),
 	    title: title,
@@ -67,131 +63,12 @@ function getMarker(map, latitude, longitude, asset, time, heading, speed, dist_t
 	
     var boxTextTitle = document.createElement("div");
     boxTextTitle.className = "wusmap-infobox-title";
-    boxTextTitle.innerHTML = asset;
+    boxTextTitle.innerHTML = name;
     boxText.appendChild(boxTextTitle);
 	
     var boxTextDescription = document.createElement("div");
     boxTextDescription.className = "wusmap-infobox-description";
-	var boxTextDescriptionTable = document.createElement("table");
-	var boxTextDescriptionTableRow;
-	var boxTextDescriptionTableCol;
-	if (time != null) {
-		boxTextDescriptionTableRow = document.createElement("tr");
-		boxTextDescriptionTableCol = document.createElement("td");
-		boxTextDescriptionTableCol.className = "wusmap-infobox-description-key";
-		boxTextDescriptionTableCol.innerHTML = "Time:";
-		boxTextDescriptionTableRow.appendChild(boxTextDescriptionTableCol);
-		boxTextDescriptionTableCol = document.createElement("td");
-		boxTextDescriptionTableCol.className = "wusmap-infobox-description-value";
-		boxTextDescriptionTableCol.innerHTML = time;
-		boxTextDescriptionTableRow.appendChild(boxTextDescriptionTableCol);
-		boxTextDescriptionTable.appendChild(boxTextDescriptionTableRow);
-	}
-	boxTextDescriptionTableRow = document.createElement("tr");
-    boxTextDescriptionTableCol = document.createElement("td");
-	boxTextDescriptionTableCol.className = "wusmap-infobox-description-key";
-	boxTextDescriptionTableCol.innerHTML = "Latitude:";
-    boxTextDescriptionTableRow.appendChild(boxTextDescriptionTableCol);
-    boxTextDescriptionTableCol = document.createElement("td");
-	boxTextDescriptionTableCol.className = "wusmap-infobox-description-value";
-	boxTextDescriptionTableCol.innerHTML = coordToString(latitude, true);
-    boxTextDescriptionTableRow.appendChild(boxTextDescriptionTableCol);
-    boxTextDescriptionTable.appendChild(boxTextDescriptionTableRow);
-	boxTextDescriptionTableRow = document.createElement("tr");
-    boxTextDescriptionTableCol = document.createElement("td");
-	boxTextDescriptionTableCol.className = "wusmap-infobox-description-key";
-	boxTextDescriptionTableCol.innerHTML = "Longitude:";
-    boxTextDescriptionTableRow.appendChild(boxTextDescriptionTableCol);
-    boxTextDescriptionTableCol = document.createElement("td");
-	boxTextDescriptionTableCol.className = "wusmap-infobox-description-value";
-	boxTextDescriptionTableCol.innerHTML = coordToString(longitude, false);
-    boxTextDescriptionTableRow.appendChild(boxTextDescriptionTableCol);
-    boxTextDescriptionTable.appendChild(boxTextDescriptionTableRow);
-	if (heading != null) {
-		boxTextDescriptionTableRow = document.createElement("tr");
-		boxTextDescriptionTableCol = document.createElement("td");
-		boxTextDescriptionTableCol.className = "wusmap-infobox-description-key";
-		boxTextDescriptionTableCol.innerHTML = "Heading:";
-		boxTextDescriptionTableRow.appendChild(boxTextDescriptionTableCol);
-		boxTextDescriptionTableCol = document.createElement("td");
-		boxTextDescriptionTableCol.className = "wusmap-infobox-description-value";
-		boxTextDescriptionTableCol.innerHTML = heading + "&deg;";
-		boxTextDescriptionTableRow.appendChild(boxTextDescriptionTableCol);
-		boxTextDescriptionTable.appendChild(boxTextDescriptionTableRow);
-	}
-	if (speed != null) {
-		boxTextDescriptionTableRow = document.createElement("tr");
-		boxTextDescriptionTableCol = document.createElement("td");
-		boxTextDescriptionTableCol.className = "wusmap-infobox-description-key";
-		boxTextDescriptionTableCol.innerHTML = "Speed:";
-		boxTextDescriptionTableRow.appendChild(boxTextDescriptionTableCol);
-		boxTextDescriptionTableCol = document.createElement("td");
-		boxTextDescriptionTableCol.className = "wusmap-infobox-description-value";
-		boxTextDescriptionTableCol.innerHTML = speed + " kts";
-		boxTextDescriptionTableRow.appendChild(boxTextDescriptionTableCol);
-		boxTextDescriptionTable.appendChild(boxTextDescriptionTableRow);
-	}
-	if (dist_to_prev != null) {
-		boxTextDescriptionTableRow = document.createElement("tr");
-		boxTextDescriptionTableCol = document.createElement("td");
-		boxTextDescriptionTableCol.className = "wusmap-infobox-description-key";
-		boxTextDescriptionTableCol.innerHTML = "Since last point:";
-		boxTextDescriptionTableRow.appendChild(boxTextDescriptionTableCol);
-		boxTextDescriptionTableCol = document.createElement("td");
-		boxTextDescriptionTableCol.className = "wusmap-infobox-description-value";
-		boxTextDescriptionTableCol.innerHTML = dist_to_prev + " M";
-		boxTextDescriptionTableRow.appendChild(boxTextDescriptionTableCol);
-		boxTextDescriptionTable.appendChild(boxTextDescriptionTableRow);
-	}
-	if (avg_speed_since_prev != null) {
-		boxTextDescriptionTableRow = document.createElement("tr");
-		boxTextDescriptionTableCol = document.createElement("td");
-		boxTextDescriptionTableCol.className = "wusmap-infobox-description-key";
-		boxTextDescriptionTableCol.innerHTML = "Average speed:";
-		boxTextDescriptionTableRow.appendChild(boxTextDescriptionTableCol);
-		boxTextDescriptionTableCol = document.createElement("td");
-		boxTextDescriptionTableCol.className = "wusmap-infobox-description-value";
-		boxTextDescriptionTableCol.innerHTML = avg_speed_since_prev + " kts";
-		boxTextDescriptionTableRow.appendChild(boxTextDescriptionTableCol);
-		boxTextDescriptionTable.appendChild(boxTextDescriptionTableRow);
-	}
-	if (dist_to_dest != null) {
-		boxTextDescriptionTableRow = document.createElement("tr");
-		boxTextDescriptionTableCol = document.createElement("td");
-		boxTextDescriptionTableCol.className = "wusmap-infobox-description-key";
-		boxTextDescriptionTableCol.innerHTML = "To destination:";
-		boxTextDescriptionTableRow.appendChild(boxTextDescriptionTableCol);
-		boxTextDescriptionTableCol = document.createElement("td");
-		boxTextDescriptionTableCol.className = "wusmap-infobox-description-value";
-		boxTextDescriptionTableCol.innerHTML = dist_to_dest + " M";
-		boxTextDescriptionTableRow.appendChild(boxTextDescriptionTableCol);
-		boxTextDescriptionTable.appendChild(boxTextDescriptionTableRow);
-	}
-	if (remaining != null) {
-		boxTextDescriptionTableRow = document.createElement("tr");
-		boxTextDescriptionTableCol = document.createElement("td");
-		boxTextDescriptionTableCol.className = "wusmap-infobox-description-key";
-		boxTextDescriptionTableCol.innerHTML = "Remaining:";
-		boxTextDescriptionTableRow.appendChild(boxTextDescriptionTableCol);
-		boxTextDescriptionTableCol = document.createElement("td");
-		boxTextDescriptionTableCol.className = "wusmap-infobox-description-value";
-		boxTextDescriptionTableCol.innerHTML = remaining;
-		boxTextDescriptionTableRow.appendChild(boxTextDescriptionTableCol);
-		boxTextDescriptionTable.appendChild(boxTextDescriptionTableRow);
-	}
-	if (eta != null) {
-		boxTextDescriptionTableRow = document.createElement("tr");
-		boxTextDescriptionTableCol = document.createElement("td");
-		boxTextDescriptionTableCol.className = "wusmap-infobox-description-key";
-		boxTextDescriptionTableCol.innerHTML = "<span title='Estimated Time of Arrival: this is an *estimation* based on caluculation and not on weather or sea conditions...'>ETA<sup>?</sup></span>:";
-		boxTextDescriptionTableRow.appendChild(boxTextDescriptionTableCol);
-		boxTextDescriptionTableCol = document.createElement("td");
-		boxTextDescriptionTableCol.className = "wusmap-infobox-description-value";
-		boxTextDescriptionTableCol.innerHTML = eta;
-		boxTextDescriptionTableRow.appendChild(boxTextDescriptionTableCol);
-		boxTextDescriptionTable.appendChild(boxTextDescriptionTableRow);
-	}
-    boxTextDescription.appendChild(boxTextDescriptionTable);
+	boxTextDescription.innerHTML = content;
     boxText.appendChild(boxTextDescription);
 	
     info.setContent(boxText);
@@ -203,20 +80,6 @@ function getMarker(map, latitude, longitude, asset, time, heading, speed, dist_t
 	});
 	
     return marker;
-}
-
-function coordToString(coord, is_lat) {
-	var is_neg = coord < 0;
-	if (is_neg) {
-		coord = 0 - coord;
-	}
-	var deg = Math.floor(coord);
-	coord = (coord - deg) * 60;
-	var min = Math.floor(coord);
-	coord = (coord - min) * 60;
-	var sec = Math.floor(coord);
-	var card = is_lat ? (is_neg ? "S" : "N") : (is_neg ? "W" : "E");
-	return deg + "&deg;" + min + "'" + sec + "'' " + card;
 }
 
 function addEvent(obj, evType, fn) {

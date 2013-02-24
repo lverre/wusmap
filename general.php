@@ -27,6 +27,28 @@
 
 include_once "config.php";
 
+/* Translation */
+
+$lang = "en";
+if (isset($_REQUEST['lang'])) {
+	$lang = $_REQUEST['lang'];
+} else if (isset($_SERVER['HTTP_ACCEPT_LANGUAGE'])) {
+	$lang = substr($_SERVER['HTTP_ACCEPT_LANGUAGE'], 0, 2);
+}
+if (!file_exists("./i18n/$lang.php")) $lang = "en";
+putenv("LANG=$lang");
+setlocale(LC_ALL, "$lang");
+include_once "./i18n/$lang.php";
+
+function __($key) {
+	global $MESSAGES;
+	return $MESSAGES[$key];
+}
+
+function _e($key) {
+	echo __($key);
+}
+
 /* Emails */
 
 function parseEmail($content) {
@@ -68,9 +90,9 @@ function parseEmail($content) {
 function executeSQL($sql) {
 	global $CONFIG;
 	$mysqli = new mysqli($CONFIG['db_host'], $CONFIG['db_user'], $CONFIG['db_pwd'], $CONFIG['db_name']);
-	if ($mysqli->connect_errno) die("Failed to connect to MySQL: (" . $mysqli->connect_errno . ") " . $mysqli->connect_error);
+	if ($mysqli->connect_errno) die(sprintf(__("SH_SQL_CONNECTION_FAILED"), $mysqli->connect_error));
 	$result = $mysqli->query($sql);
-	if (!$result) die("Query failed: '" . $sql . "' -> error " . $mysqli->errno . " " . $mysqli->error);
+	if (!$result) die(sprintf(__("SH_SQL_QUERY_FAILED"), $sql, $mysqli->errno, $mysqli->error));
 	return $result;
 }
 

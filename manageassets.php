@@ -47,24 +47,24 @@ if (isset($_POST['operation'])) {
 <html>
 <head>
 	<meta charset=utf-8 />
-	<title>Manage Wusmap Assets</title>
+	<title><?php _e("MANAGE"); ?></title>
 	<link rel="stylesheet" href="wusmap.css" />
 	<script src="wusmap.js"></script>
 </head>
 <body>
-<h1>Manage Wusmap Assets</h1>
+<h1><?php _e("MANAGE"); ?></h1>
 <form method="post">
 <table>
 <tr>
-	<td><label>Operation:</label></td>
+	<td><label><?php _e("MANAGE_OPERATION_TITLE"); ?></label></td>
 	<td>
-		<input type="radio" name="operation" id="operation_add" value="add" onchange="if (this.checked) { setDisplay('assets_tr', 'none'); setDisplay('name_tr', 'table-row'); setDisplay('id_tr', 'table-row'); }" checked="checked" /><label for="operation_add">Add</label>
-		<input type="radio" name="operation" id="operation_edit" value="edit" onchange="if (this.checked) { setDisplay('assets_tr', 'table-row'); setDisplay('name_tr', 'table-row'); setDisplay('id_tr', 'none'); }" /><label for="operation_edit">Edit</label>
-		<input type="radio" name="operation" id="operation_delete" value="delete" onchange="if (this.checked) { setDisplay('assets_tr', 'table-row'); setDisplay('name_tr', 'none'); setDisplay('id_tr', 'none'); }" /><label for="operation_delete">Delete</label>
+		<input type="radio" name="operation" id="operation_add" value="add" onchange="if (this.checked) { setDisplay('assets_tr', 'none'); setDisplay('name_tr', 'table-row'); setDisplay('id_tr', 'table-row'); }" checked="checked" /><label for="operation_add"><?php _e("MANAGE_OPERATION_ADD"); ?></label>
+		<input type="radio" name="operation" id="operation_edit" value="edit" onchange="if (this.checked) { setDisplay('assets_tr', 'table-row'); setDisplay('name_tr', 'table-row'); setDisplay('id_tr', 'none'); }" /><label for="operation_edit"><?php _e("MANAGE_OPERATION_EDIT"); ?></label>
+		<input type="radio" name="operation" id="operation_delete" value="delete" onchange="if (this.checked) { setDisplay('assets_tr', 'table-row'); setDisplay('name_tr', 'none'); setDisplay('id_tr', 'none'); }" /><label for="operation_delete"><?php _e("MANAGE_OPERATION_DEL"); ?></label>
 	</td>
 </tr>
 <tr id="assets_tr" style="display: none;">
-	<td><label for="assets">Asset:</label></td>
+	<td><label for="assets"><?php _e("SH_BOAT_TITLE"); ?></label></td>
 	<td>
 		<select name="assets" id="assets">
 <?php
@@ -77,15 +77,15 @@ while ($asset = $assets->fetch_assoc()) {
 	</td>
 </tr>
 <tr id="id_tr">
-	<td><label for="name">Id:</label></td>
-	<td><input type="number" name="id" id="id" title="The id of the asset" /></td>
+	<td><label for="name"><?php _e("MANAGE_ID_TITLE"); ?></label></td>
+	<td><input type="number" name="id" id="id" title="<?php _e("MANAGE_ID_TOOLTIP"); ?>" /></td>
 </tr>
 <tr id="name_tr">
-	<td><label for="name">Name:</label></td>
-	<td><input type="text" name="name" id="name" title="The name of the asset" /></td>
+	<td><label for="name"><?php _e("SH_NAME_TITLE"); ?></label></td>
+	<td><input type="text" name="name" id="name" title="<?php _e("MANAGE_NAME_TOOLTIP"); ?>" /></td>
 </tr>
 </table>
-<input type="submit" value="Submit" />
+<input type="submit" value="<?php _e("SH_SUBMIT"); ?>" />
 </form>
 </body>
 </html>

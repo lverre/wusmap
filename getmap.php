@@ -25,7 +25,11 @@
  * @description Gets the map.
  */
 
+if (isset($_GET['lang'])) $lang = $_GET['lang'];
+
 include_once "general.php";
+
+$DATE_FORMAT = "Y-m-d H:i:s";
 
 function getDist($lat1, $lon1, $lat2, $lon2) {
 	$theta = $lon1 - $lon2;
@@ -33,12 +37,60 @@ function getDist($lat1, $lon1, $lat2, $lon2) {
 	return $arc * 3440.0696544276457883369330453564;// Earth radius in nautical mile
 }
 
-function getMarker($asset, $point, $prev_point, $dest_lat, $dest_lon) {
+function getRow($name, $value, $format=null) {
+	if ($value != null) {
+		if ($format != null) $value = sprintf($format, $value);
+		return "<tr><td class='wusmap-infobox-description-key'>$name</td><td class='wusmap-infobox-description-value'>$value</td>";
+	} else {
+		return "";
+	}
+}
+
+function getCoord($coord, $is_lat) {
+	global $MESSAGES;
+	$is_neg = $coord < 0;
+	if ($is_neg) {
+		$coord = 0 - $coord;
+	}
+	$deg = floor($coord);
+	$coord = ($coord - $deg) * 60;
+	$min = floor($coord);
+	$coord = ($coord - $min) * 60;
+	$sec = floor($coord);
+	$card = $is_lat ? ($is_neg ? __("SH_CARD_S") : __("SH_CARD_N")) : ($is_neg ? __("SH_CARD_W") : __("SH_CARD_E"));
+	return $deg . "&deg;" . $min . "'" . $sec . "'' " . $card;
+}
+
+function getMarker($name, $lat, $lon, $time, $heading, $speed, $dist_to_prev, $avg_speed_since_prev, $dist_to_dest, $eta, $remaining) {
+	global $MESSAGES;
+	global $DATE_FORMAT;
+	$time = $time != null ? date($DATE_FORMAT, $time) : null;
+	
+	$content = "<table>";
+	$content .= getRow(__("MAP_DATETIME_TITLE"), $time);
+	$content .= getRow(__("SH_LAT_TITLE"), getCoord($lat, true));
+	$content .= getRow(__("SH_LON_TITLE"), getCoord($lon, false));
+	$content .= getRow(__("SH_HEADING_TITLE"), $heading, __("MAP_HEADING_FORMAT"));
+	$content .= getRow(__("SH_SPEED_TITLE"), $speed, __("MAP_SPEED_FORMAT"));
+	$content .= getRow(__("MAP_DIST_TO_PREV_TITLE"), $dist_to_prev, __("MAP_DIST_FORMAT"));
+	$content .= getRow(__("MAP_SPEED_AVG_TITLE"), $avg_speed_since_prev, __("MAP_SPEED_FORMAT"));
+	$content .= getRow(__("MAP_DIST_TO_DEST_TITLE"), $dist_to_dest, __("MAP_DIST_FORMAT"));
+	$content .= getRow(__("MAP_REMAINING_TITLE"), $remaining);
+	$content .= getRow("<span title='" . __("MAP_ETA_TOOLTIP") . "'>" . __("MAP_ETA_TITLE") . "</span>:", $eta != null ? date($DATE_FORMAT, $eta) : null);
+	$content .= "</table>";
+	
+	$title = sprintf(__("MAP_TITLE_FORMAT"), $name, $time);
+	
+	return "getMarker(map, $lat, $lon, \"$name\", \"$title\", \"$content\");";
+}
+
+function getPointMarker($asset, $point, $prev_point, $dest_lat, $dest_lon) {
+	global $MESSAGES;
 	$now = strtotime($point['time']);
 	$speed = $point['speed'];
 	
-	$dist_to_prev = "null";
-	$avg_speed_since_prev = "null";
+	$dist_to_prev = null;
+	$avg_speed_since_prev = null;
 	if ($prev_point != null) {
 		$dist_to_prev = getDist($point['latitude'], $point['longitude'], $prev_point['latitude'], $prev_point['longitude']);
 		$interval = $now - strtotime($prev_point['time']);
@@ -47,30 +99,26 @@ function getMarker($asset, $point, $prev_point, $dest_lat, $dest_lon) {
 		$dist_to_prev = round($dist_to_prev, 1);
 	}
 	
-	$dist_to_dest = "null";
-	$eta = "null";
-	$remaining = "null";
+	$dist_to_dest = null;
+	$eta = null;
+	$remaining = null;
 	if ($dest_lat != null && $dest_lon != null) {
 		$dist_to_dest = getDist($point['latitude'], $point['longitude'], $dest_lat, $dest_lon);
-		if ($point['speed'] > 0) {
+		if ($dist_to_dest >= 5 && $point['speed'] > 0) {
 			$remaining_seconds = round(($dist_to_dest / $speed) * 3600);
-			$eta = "'" . date("Y-m-d H:i:s", $now + $remaining_seconds) . "'";
+			$eta = $now + $remaining_seconds;
 			$days = floor($remaining_seconds / 86400);
 			$remaining_seconds -= $days * 86400;
 			$hours = round($remaining_seconds / 3600);
-			$remaining = "'$days day(s) $hours hour(s)'";
+			$remaining = sprintf(__("MAP_REMAINING_FORMAT"), $days, $hours);
 		}
 		$dist_to_dest = round($dist_to_dest, 1);
 	}
 	
-	return getMarker2("'" . $asset['name'] . "'", $point['latitude'], $point['longitude'], "'" . date("Y-m-d H:i:s", $now) . "'", $point['heading'], $point['speed'], $dist_to_prev, $avg_speed_since_prev, $dist_to_dest, $eta, $remaining);
+	return getMarker($asset['name'], $point['latitude'], $point['longitude'], $now, $point['heading'], $point['speed'], $dist_to_prev, $avg_speed_since_prev, $dist_to_dest, $eta, $remaining);
 }
 
-function getMarker2($name, $lat, $lon, $time, $heading, $speed, $dist_to_prev, $avg_speed_since_prev, $dist_to_dest, $eta, $remaining) {
-	return "getMarker(map, $lat, $lon, $name, $time, $heading, $speed, $dist_to_prev, $avg_speed_since_prev, $dist_to_dest, $eta, $remaining);";
-}
-
-function getMap($map_div_id, $width, $height, $zoom, $center_lat, $center_lon, $navigation_control, $mapType_control, $scale_control, $map_type, $route_color, $route_opacity, $route_weight, $asset_id, $min_date, $max_date, $first_marker, $last_marker, $marker_every, $dest_show, $dest_name, $dest_lat, $dest_lon) {
+function getMap($map_div_id, $width, $height, $zoom, $center_lat, $center_lon, $navigation_control, $mapType_control, $scale_control, $map_type, $route_color, $route_opacity, $route_weight, $asset_id, $min_date, $max_date, $first_marker, $last_marker, $marker_every, $dest_name, $dest_lat, $dest_lon) {
 	global $CONFIG;
 	$map_type = "google.maps.MapTypeId." . $map_type;
 	
@@ -98,12 +146,12 @@ function getMap($map_div_id, $width, $height, $zoom, $center_lat, $center_lon, $
 	$max_lat = -90;
 	$min_lon = 180;
 	$max_lon = -180;
-	if ($dest_show) {
+	if ($dest_lat != null && $dest_lon != null) {
 		if ($dest_lat < $min_lat) $min_lat = $dest_lat;
 		if ($dest_lat > $max_lat) $max_lat = $dest_lat;
 		if ($dest_lon < $min_lon) $min_lon = $dest_lon;
 		if ($dest_lon > $max_lon) $max_lon = $dest_lon;
-		$markers .= getMarker2("'" . $dest_name . "'", $dest_lat, $dest_lon, "null", "null", "null", "null", "null", "null", "null", "null") . "\n";
+		$markers .= getMarker("'" . $dest_name . "'", $dest_lat, $dest_lon, null, null, null, null, null, null, null, null) . "\n";
 	} else {
 		// Just in case...
 		$dest_lat = null;
@@ -120,7 +168,7 @@ function getMap($map_div_id, $width, $height, $zoom, $center_lat, $center_lon, $
 		$add_points .= "
 	addPoint(points, " . $lat . ", " . $lon . ");";
 		if (($first_marker && $index == 0) || ($marker_every > 0 && ($index % $marker_every) == 0)) {
-			$markers .= "	" . getMarker($asset, $point, $prev_point, $dest_lat, $dest_lon) . "\n";
+			$markers .= "	" . getPointMarker($asset, $point, $prev_point, $dest_lat, $dest_lon) . "\n";
 		}
 		if ($lat < $min_lat) $min_lat = $lat;
 		if ($lat > $max_lat) $max_lat = $lat;
@@ -129,7 +177,7 @@ function getMap($map_div_id, $width, $height, $zoom, $center_lat, $center_lon, $
 		$index++;
 	}
 	if ($last_marker && !($first_marker && $index == 1) && !($marker_every > 0 && (($index - 1) % $marker_every) == 0)) {
-		$markers .= "	" . getMarker($asset, $last_point, $prev_point, $dest_lat, $dest_lon) . "\n";
+		$markers .= "	" . getPointMarker($asset, $last_point, $prev_point, $dest_lat, $dest_lon) . "\n";
 	}
 	
 	if ($zoom != null) {
@@ -188,12 +236,11 @@ $max_date = getOrDefault("max_date", null);
 $first_marker = getOrDefault("first_marker", null) == 'on';
 $last_marker = getOrDefault("last_marker", null) == 'on';
 $marker_every = getOrDefault("marker_every", 0);
-$dest_show = getOrDefault("destination_show", null) == 'on';
 $dest_name = getOrDefault("destination_name", "Destination");
 $dest_lat = getOrDefault("destination_lat", null);
 $dest_lon = getOrDefault("destination_lon", null);
 
-$js = getMap($map_div_id, $width, $height, $zoom, $center_lat, $center_lon, $navigation_control, $map_type_control, $scale_control, $map_type, $route_color, $route_opacity, $route_weight, $asset_id, $min_date, $max_date, $first_marker, $last_marker, $marker_every, $dest_show, $dest_name, $dest_lat, $dest_lon);
+$js = getMap($map_div_id, $width, $height, $zoom, $center_lat, $center_lon, $navigation_control, $map_type_control, $scale_control, $map_type, $route_color, $route_opacity, $route_weight, $asset_id, $min_date, $max_date, $first_marker, $last_marker, $marker_every, $dest_name, $dest_lat, $dest_lon);
 
 if (getOrDefault("output", null) != "iframe") {
 	echo $js;
@@ -202,7 +249,7 @@ if (getOrDefault("output", null) != "iframe") {
 <html>
 <head>
 	<meta charset=utf-8 />
-	<title>Route</title>
+	<title><?php _e("MAP"); ?></title>
 	<link rel="stylesheet" href="wusmap.css" />
 	<script src="http://maps.google.com/maps/api/js?sensor=false"></script>
 	<script src="infobox_packed.js"></script>
@@ -213,7 +260,7 @@ if (getOrDefault("output", null) != "iframe") {
 </head>
 <body>
 	<div id="wusmap"></div>
-	<div style="clear:both; font-size:0.8em; font-style:italic;">This map is powered by <a href="http://lverre.github.com/wusmap">wusmap</a>.</div>
+	<div style="clear:both; font-size:0.8em; font-style:italic;"><?php echo sprintf(__("MAP_POWERED"), "<a href='http://lverre.github.com/wusmap'>wusmap</a>"); ?></div>
 </body>
 </html>
 <?php

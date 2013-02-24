@@ -63,24 +63,24 @@ if (isset($_REQUEST['input'])) {
 <html>
 <head>
 	<meta charset=utf-8 />
-	<title>Manually Add A Point</title>
+	<title><?php _e("ADD_POINT"); ?></title>
 	<link rel="stylesheet" href="wusmap.css" />
 	<script src="wusmap.js"></script>
 </head>
 <body>
-<h1>Manually Add A Point</h1>
+<h1><?php _e("ADD_POINT"); ?></h1>
 <form method="post">
 <div>
-	<input type="radio" name="input" id="input_values" value="values" onchange="if (this.checked) { setDisplay('xml_div', 'none'); setDisplay('values_table', 'block'); }" checked="checked" /><label for="input_values">Values</label>
-	<input type="radio" name="input" id="input_xml" value="xml" onchange="if (this.checked) { setDisplay('xml_div', 'block'); setDisplay('values_table', 'none'); }" /><label for="input_xml">XML</label>
+	<input type="radio" name="input" id="input_values" value="values" onchange="if (this.checked) { setDisplay('xml_div', 'none'); setDisplay('values_table', 'block'); }" checked="checked" /><label for="input_values"><?php _e("ADD_POINT_VALUES"); ?></label>
+	<input type="radio" name="input" id="input_xml" value="xml" onchange="if (this.checked) { setDisplay('xml_div', 'block'); setDisplay('values_table', 'none'); }" /><label for="input_xml"><?php _e("ADD_POINT_XML"); ?></label>
 </div>
 <div id="xml_div" style="display: none">
-	<label for="xml">XML (from Email):</label><br />
-	<textarea rows="30" cols="80" name="xml" id="xml" title="Paste the body of the email as XML"></textarea>
+	<label for="xml"><?php _e("ADD_POINT_XML_TITLE"); ?></label><br />
+	<textarea rows="30" cols="80" name="xml" id="xml" title="<?php _e("ADD_POINT_XML_TOOLTIP"); ?>"></textarea>
 </div>
 <table id="values_table">
 <tr>
-	<td><label for="asset_id">Asset:</label></td>
+	<td><label for="asset_id"><?php _e("SH_BOAT_TITLE"); ?></label></td>
 	<td>
 		<select name="asset_id" id="asset_id">
 <?php
@@ -93,27 +93,27 @@ while ($asset = $assets->fetch_assoc()) {
 	</td>
 </tr>
 <tr>
-	<td><label for="latitude">Latitude:</label></td>
-	<td><input type="number" step="0.00001" min="-90" max="90" name="latitude" id="latitude" title="In decimal: 42.5 for 45&deg;30'N" style="width: 100px" /></td>
+	<td><label for="latitude"><?php _e("SH_LAT_TITLE"); ?></label></td>
+	<td><input type="number" step="0.00001" min="-90" max="90" name="latitude" id="latitude" title="<?php _e("SH_LAT_TOOLTIP"); ?>" style="width: 100px" /></td>
 </tr>
 <tr>
-	<td><label for="longitude">Longitude:</label></td>
-	<td><input type="number" step="0.00001" min="-180" max="180" name="longitude" id="longitude" title="In decimal: 42.5 for 45&deg;30'E" style="width: 100px" /></td>
+	<td><label for="longitude"><?php _e("SH_LON_TITLE"); ?></label></td>
+	<td><input type="number" step="0.00001" min="-180" max="180" name="longitude" id="longitude" title="<?php _e("SH_LON_TOOLTIP"); ?>" style="width: 100px" /></td>
 </tr>
 <tr>
-	<td><label for="datetime">Date &amp; Time:</label></td>
-	<td><input type="datetime" name="datetime" id="datetime" title="In the format ISO 8601, e.g. 2004-05-23T14:25:10" /></td>
+	<td><label for="datetime"><?php _e("ADD_POINT_DATETIME_TITLE"); ?></label></td>
+	<td><input type="datetime" name="datetime" id="datetime" title="<?php _e("ADD_POINT_DATETIME_TOOLTIP"); ?>" /></td>
 </tr>
 <tr>
-	<td><label for="heading">Heading:</label></td>
-	<td><input type="number" step="0.01" min="0" max="360" name="heading" id="heading" title="In degree, in decimal, e.g. 265.7" style="width: 50px" /></td>
+	<td><label for="heading"><?php _e("SH_HEADING_TITLE"); ?></label></td>
+	<td><input type="number" step="0.01" min="0" max="360" name="heading" id="heading" title="<?php _e("ADD_POINT_HEADING_TOOLTIP"); ?>" style="width: 50px" /></td>
 </tr>
 <tr>
-	<td><label for="speed">Speed:</label></td>
-	<td><input type="number" step="0.01" min="0" name="speed" id="speed" title="In knots, in decimal, e.g. 5.2" style="width: 50px" /></td>
+	<td><label for="speed"><?php _e("SH_SPEED_TITLE"); ?></label></td>
+	<td><input type="number" step="0.01" min="0" name="speed" id="speed" title="<?php _e("ADD_POINT_SPEED_TOOLTIP"); ?>" style="width: 50px" /></td>
 </tr>
 </table>
-<input type="submit" value="Submit" />
+<input type="submit" value="<?php _e("SH_SUBMIT"); ?>" />
 </form>
 </body>
 </html>

@@ -29,6 +29,7 @@ include_once "general.php";
 
 function checkEmails() {
 	global $CONFIG;
+	global $MESSAGES;
 	$table_name = $CONFIG['db_prefix'] . "points";
 	$connection = imap_open('{' . $CONFIG['email_host'] . '/notls}', $CONFIG['email_name'], $CONFIG['email_pwd']);
 	$unseen = imap_search($connection, 'UNSEEN');
@@ -43,9 +44,9 @@ function checkEmails() {
 		}
 	}
 	if ($output == "") {
-		echo "No new email.";
+		_e("CHECK_EMAILS_NONE");
 	} else {
-		echo "Parsed emails received at:\n<ul>\n" . $output . "</ul>";
+		_e("CHECK_EMAILS_PARSED") . "\n<ul>\n" . $output . "</ul>";
 	}
 }
 
@@ -54,11 +55,11 @@ function checkEmails() {
 <html>
 <head>
 	<meta charset=utf-8 />
-	<title>Wusmap Check Emails</title>
+	<title><?php _e("CHECK_EMAILS"); ?></title>
 	<link rel="stylesheet" href="wusmap.css" />
 </head>
 <body>
-<h1>Wusmap Check Emails</h1>
+<h1><?php _e("CHECK_EMAILS"); ?></h1>
 <?php checkEmails(); ?>
 </body>
 </html>
