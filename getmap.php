@@ -261,6 +261,7 @@ if (getOrDefault("output", null) != "iframe") {
 	echo $js;
 } else {
 ?>
+<!DOCTYPE html>
 <html>
 <head>
 	<meta charset=utf-8 />
