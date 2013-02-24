@@ -187,11 +187,11 @@ while ($asset = $assets->fetch_assoc()) {
 </tr>
 <tr>
 	<td>
-		<input type="checkbox" id="use_marker_every" onchange="setDisabled('marker_every', !this.checked); setDisplay('marker_every', this.checked ? 'inline-block' : 'none');" />
+		<input type="checkbox" id="use_marker_every" onchange="setDisabled('marker_every', !this.checked);" />
 		<label for="use_marker_every"><?php _e("GET_MAP_MARKERS_EVERY_TITLE"); ?></label>
 	</td>
 	<td>
-		<input type="number" step="1" min="1" name="marker_every" id="marker_every" disabled="disabled" value="4" style="display:none;" title="<?php _e("GET_MAP_MARKERS_EVERY_TOOLTIP"); ?>" />
+		<input type="number" step="1" min="1" name="marker_every" id="marker_every" disabled="disabled" value="4" title="<?php _e("GET_MAP_MARKERS_EVERY_TOOLTIP"); ?>" />
 		<?php _e("GET_MAP_MARKERS_EVERY_POINTS"); ?>
 	</td>
 </tr>
