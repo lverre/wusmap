@@ -217,6 +217,19 @@ addEvent(window, 'load', wusmapInit);
 ";
 }
 
+function getBiggerMapUrl() {
+	$url = "http://$_SERVER[HTTP_HOST]$_SERVER[PHP_SELF]?";
+	foreach ($_REQUEST as $key => $value) {
+		if ($key == 'height' || $key == 'width') {
+			$value = '100%';
+		}
+		if ($key != 'show_powered' && $key != 'show_big_map') {
+			$url .= $key . "=" . urlencode($value) . "&";
+		}
+	}
+	return $url;
+}
+
 $map_div_id = getOrDefault("map_div_id", "wusmap");
 $width = getOrDefault("width", 500);
 $height = getOrDefault("height", 500);
@@ -239,6 +252,8 @@ $marker_every = getOrDefault("marker_every", 0);
 $dest_name = getOrDefault("destination_name", "Destination");
 $dest_lat = getOrDefault("destination_lat", null);
 $dest_lon = getOrDefault("destination_lon", null);
+$show_powered = getOrDefault("show_powered", null) == 'on';
+$show_big_map = getOrDefault("show_big_map", null) == 'on';
 
 $js = getMap($map_div_id, $width, $height, $zoom, $center_lat, $center_lon, $navigation_control, $map_type_control, $scale_control, $map_type, $route_color, $route_opacity, $route_weight, $asset_id, $min_date, $max_date, $first_marker, $last_marker, $marker_every, $dest_name, $dest_lat, $dest_lon);
 
@@ -260,7 +275,11 @@ if (getOrDefault("output", null) != "iframe") {
 </head>
 <body>
 	<div id="wusmap"></div>
-	<div style="clear:both; font-size:0.8em; font-style:italic;"><?php echo sprintf(__("MAP_POWERED"), "<a href='http://lverre.github.com/wusmap'>wusmap</a>"); ?></div>
+<?php if ($show_big_map) { ?>
+	<div style="clear:both; font-size:0.8em; font-style:italic;"><?php echo sprintf(__("MAP_LINK_BIG_MAP"), getBiggerMapUrl()); ?></div>
+<?php } if ($show_powered) { ?>
+	<div style="clear:both; font-size:0.8em; font-style:italic;"><?php echo sprintf(__("MAP_LINK_POWERED"), "http://lverre.github.com/wusmap"); ?></div>
+<?php } ?>
 </body>
 </html>
 <?php

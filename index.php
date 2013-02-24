@@ -47,8 +47,13 @@ include_once "general.php";
 <tr>
 	<td><label><?php _e("GET_MAP_OUTPUT_TITLE"); ?></label></td>
 	<td>
-		<input type="radio" name="output" id="output_iframe" value="iframe" onchange="if (this.checked) { setDisabled('map_div_id', true); setDisplay('map_div_id_tr', 'none'); }" checked="checked" /><label for="output_iframe"><?php _e("GET_MAP_OUTPUT_IFRAME"); ?></label>
-		<input type="radio" name="output" id="output_script" value="script" onchange="if (this.checked) { setDisabled('map_div_id', false); setDisplay('map_div_id_tr', 'table-row'); }" /><label for="output_script"><?php _e("GET_MAP_OUTPUT_SCRIPT"); ?></label>
+		<input type="radio" name="output" id="output_iframe" value="iframe" onchange="if (this.checked) { setDisabled('map_div_id', true); setVisibility('map_div_id_tr', false); setVisibility('misc_tr', true); setVisibility('misc_powered_tr', true); setVisibility('misc_big_map_tr', true); }" checked="checked" /><label for="output_iframe"><?php _e("GET_MAP_OUTPUT_IFRAME"); ?></label>
+		<input type="radio" name="output" id="output_script" value="script" onchange="if (this.checked) { setDisabled('map_div_id', false); setVisibility('map_div_id_tr', true); setVisibility('misc_tr', false); setVisibility('misc_powered_tr', false); setVisibility('misc_big_map_tr', false); }" /><label for="output_script"><?php _e("GET_MAP_OUTPUT_SCRIPT"); ?></label>
+		<div id="map_div_id_tr" style="display: inline; visibility:hidden;">
+			 - 
+			<label for="map_div_id"><?php _e("GET_MAP_DIV_ID_TITLE"); ?></label>
+			<input type="text" name="map_div_id" id="map_div_id" value="wusmap" title="<?php _e("GET_MAP_DIV_ID_TOOLTIP"); ?>" disabled="disabled" />
+		</div>
 	</td>
 </tr>
 <tr>
@@ -65,10 +70,6 @@ while ($asset = $assets->fetch_assoc()) {
 		(<a href="manageassets.php"><?php _e("GET_MAP_MANAGE_BOATS"); ?></a>)
 	</td>
 </tr>
-<tr id="map_div_id_tr" style="display:none;">
-	<td><label for="map_div_id"><?php _e("GET_MAP_DIV_ID_TITLE"); ?></label></td>
-	<td><input type="text" name="map_div_id" id="map_div_id" value="wusmap" title="<?php _e("GET_MAP_DIV_ID_TOOLTIP"); ?>" disabled="disabled" /></td>
-</tr>
 </table>
 </div>
 <div style="float:left; margin: 8px 16px 8px 8px; width: 300px;">
@@ -78,30 +79,30 @@ while ($asset = $assets->fetch_assoc()) {
 </tr>
 <tr>
 	<td><label for="width"><?php _e("GET_MAP_WIDTH_TITLE"); ?></label></td>
-	<td><input type="number" step="1" name="width" id="width" value="500" title="<?php _e("GET_MAP_WIDTH_TOOLTIP"); ?>" style="width: 50px" /></td>
+	<td><input type="text" name="width" id="width" value="500px" title="<?php _e("GET_MAP_WIDTH_TOOLTIP"); ?>" style="width: 50px" /></td>
 </tr>
 <tr>
 	<td><label for="height"><?php _e("GET_MAP_HEIGHT_TITLE"); ?></label></td>
-	<td><input type="number" step="1" name="height" id="height" value="500" title="<?php _e("GET_MAP_HEIGHT_TOOLTIP"); ?>" style="width: 50px" /></td>
+	<td><input type="text" name="height" id="height" value="500px" title="<?php _e("GET_MAP_HEIGHT_TOOLTIP"); ?>" style="width: 50px" /></td>
 </tr>
 <tr>
 	<td>
-		<input type="checkbox" id="manual_zoom" title="<?php _e("GET_MAP_ZOOM_TOOLTIP"); ?>" onchange="setDisabled('zoom', !this.checked); setDisplay('zoom', this.checked ? 'inline-block' : 'none');" checked="checked" />
+		<input type="checkbox" id="manual_zoom" title="<?php _e("GET_MAP_ZOOM_TOOLTIP"); ?>" onchange="setDisabled('zoom', !this.checked);" checked="checked" />
 		<label for="manual_zoom"><?php _e("GET_MAP_ZOOM_TITLE"); ?></label>
 	</td>
 	<td><input type="number" step="1" min="0" max="20" name="zoom" id="zoom" value="12" title="<?php _e("GET_MAP_ZOOM_VALUE_TOOLTIP"); ?>" style="width: 50px" /></td>
 </tr>
 <tr>
 	<td colspan="2">
-		<input type="checkbox" id="manual_center" title="<?php _e("GET_MAP_CENTER_TOOLTIP"); ?>" onchange="setDisabled('center_lat', !this.checked); setDisplay('center_lat_tr', this.checked ? 'table-row' : 'none'); setDisabled('center_lon', !this.checked); setDisplay('center_lon_tr', this.checked ? 'table-row' : 'none');" />
+		<input type="checkbox" id="manual_center" title="<?php _e("GET_MAP_CENTER_TOOLTIP"); ?>" onchange="setDisabled('center_lat', !this.checked); setDisabled('center_lon', !this.checked);" />
 		<label for="manual_center"><?php _e("GET_MAP_CENTER_TITLE"); ?></label>
 	</td>
 </tr>
-<tr id="center_lat_tr" style="display: none;">
+<tr id="center_lat_tr">
 	<td><label for="center_lat"><?php _e("SH_LAT_TITLE"); ?></label></td>
 	<td><input type="number" step="0.00001" min="-90" max="90" name="center_lat" id="center_lat" title="<?php _e("SH_LAT_TOOLTIP"); ?>" style="width: 100px" disabled="disabled" /></td>
 </tr>
-<tr id="center_lon_tr" style="display: none;">
+<tr id="center_lon_tr">
 	<td><label for="center_lon"><?php _e("SH_LON_TITLE"); ?></label></td>
 	<td><input type="number" step="0.00001" min="-180" max="180" name="center_lon" id="center_lon" title="<?php _e("SH_LON_TOOLTIP"); ?>" style="width: 100px" disabled="disabled" /></td>
 </tr>
@@ -143,7 +144,7 @@ while ($asset = $assets->fetch_assoc()) {
 </tr>
 <tr>
 	<td><label for="route_opacity"><?php _e("GET_MAP_ROUTE_OPACITY_TITLE"); ?></label></td>
-	<td><input type="number step="0.001"" min="0" max="1" name="route_opacity" id="route_opacity" value="1" title="<?php _e("GET_MAP_ROUTE_OPACITY_TOOLTIP"); ?>" style="width: 50px" /></td>
+	<td><input type="number" step="0.001"" min="0" max="1" name="route_opacity" id="route_opacity" value="1" title="<?php _e("GET_MAP_ROUTE_OPACITY_TOOLTIP"); ?>" style="width: 50px" /></td>
 </tr>
 <tr>
 	<td><label for="route_weight"><?php _e("GET_MAP_ROUTE_WEIGHT_TITLE"); ?></label></td>
@@ -158,17 +159,17 @@ while ($asset = $assets->fetch_assoc()) {
 </tr>
 <tr>
 	<td>
-		<input type="checkbox" id="use_min_date" onchange="setDisabled('min_date', !this.checked); setDisplay('min_date', this.checked ? 'inline-block' : 'none');" />
+		<input type="checkbox" id="use_min_date" onchange="setDisabled('min_date', !this.checked);" />
 		<label for="use_min_date"><?php _e("GET_MAP_DATES_MIN_TITLE"); ?></label>
 	</td>
-	<td><input type="datetime" name="min_date" id="min_date" disabled="disabled" style="display:none;" title="<?php _e("GET_MAP_DATES_MIN_TOOLTIP"); ?>" /></td>
+	<td><input type="datetime" name="min_date" id="min_date" disabled="disabled" title="<?php _e("GET_MAP_DATES_MIN_TOOLTIP"); ?>" /></td>
 </tr>
 <tr>
 	<td>
-		<input type="checkbox" id="use_max_date" onchange="setDisabled('max_date', !this.checked); setDisplay('max_date', this.checked ? 'inline-block' : 'none');" />
+		<input type="checkbox" id="use_max_date" onchange="setDisabled('max_date', !this.checked);" />
 		<label for="use_max_date"><?php _e("GET_MAP_DATES_MAX_TITLE"); ?></label>
 	</td>
-	<td><input type="datetime" name="max_date" id="max_date" disabled="disabled" style="display:none;" title="<?php _e("GET_MAP_DATES_MAX_TOOLTIP"); ?>" /></td>
+	<td><input type="datetime" name="max_date" id="max_date" disabled="disabled" title="<?php _e("GET_MAP_DATES_MAX_TOOLTIP"); ?>" /></td>
 </tr>
 <tr>
 	<th colspan="2"><?php _e("GET_MAP_MARKERS"); ?></th>
@@ -200,21 +201,36 @@ while ($asset = $assets->fetch_assoc()) {
 </tr>
 <tr>
 	<td colspan="2">
-		<input type="checkbox" id="destination_show" title="<?php _e("GET_MAP_DEST_SHOW_TOOLTIP"); ?>" onchange="setDisabled('destination_name', !this.checked); setDisabled('destination_lon', !this.checked); setDisabled('destination_lat', !this.checked); setDisplay('destination_name_tr', this.checked ? 'table-row' : 'none'); setDisplay('destination_lat_tr', this.checked ? 'table-row' : 'none'); setDisplay('destination_lon_tr', this.checked ? 'table-row' : 'none');" />
+		<input type="checkbox" id="destination_show" title="<?php _e("GET_MAP_DEST_SHOW_TOOLTIP"); ?>" onchange="setDisabled('destination_name', !this.checked); setDisabled('destination_lon', !this.checked); setDisabled('destination_lat', !this.checked);" />
 		<label for="destination_show"><?php _e("GET_MAP_DEST_SHOW_TITLE"); ?></label>
 	</td>
 </tr>
-<tr id="destination_name_tr" style="display: none;">
+<tr id="destination_name_tr">
 	<td><label for="destination_name"><?php _e("SH_NAME_TITLE"); ?></label></td>
 	<td><input type="text" name="destination_name" id="destination_name" title="<?php _e("GET_MAP_DEST_NAME_TOOLTIP"); ?>" disabled="disabled" /></td>
 </tr>
-<tr id="destination_lat_tr" style="display: none;">
+<tr id="destination_lat_tr">
 	<td><label for="destination_lat"><?php _e("SH_LAT_TITLE"); ?></label></td>
 	<td><input type="number" step="0.00001" min="-90" max="90" name="destination_lat" id="destination_lat" title="<?php _e("SH_LAT_TOOLTIP"); ?>" style="width: 100px" disabled="disabled" /></td>
 </tr>
-<tr id="destination_lon_tr" style="display: none;">
+<tr id="destination_lon_tr">
 	<td><label for="destination_lon"><?php _e("SH_LON_TITLE"); ?></label></td>
 	<td><input type="number" step="0.00001" min="-180" max="180" name="destination_lon" id="destination_lon" title="<?php _e("SH_LON_TOOLTIP"); ?>" style="width: 100px" disabled="disabled" /></td>
+</tr>
+<tr id="misc_tr">
+	<th colspan="2"><?php _e("GET_MAP_MISC"); ?></th>
+</tr>
+<tr id="misc_powered_tr">
+	<td colspan="2">
+		<input type="checkbox" name="show_powered" id="show_powered" checked="checked" />
+		<label for="show_powered"><?php _e("GET_MAP_MISC_POWERED_TITLE"); ?></label>
+	</td>
+</tr>
+<tr id="misc_big_map_tr">
+	<td colspan="2">
+		<input type="checkbox" name="show_big_map" id="show_big_map" checked="checked" />
+		<label for="show_big_map"><?php _e("GET_MAP_MISC_BIG_MAP_TITLE"); ?></label>
+	</td>
 </tr>
 </table>
 </div>

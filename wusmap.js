@@ -28,6 +28,10 @@ function setDisabled(id, is_disabled) {
 	document.getElementById(id).disabled = is_disabled;
 }
 
+function setVisibility(id, is_visible) {
+	document.getElementById(id).style.visibility = is_visible ? 'visible' : 'hidden';
+}
+
 function setDisplay(id, display) {
 	document.getElementById(id).style.display = display;
 }
