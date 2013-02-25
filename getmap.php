@@ -262,7 +262,7 @@ if (getOrDefault("output", null) != "iframe") {
 } else {
 ?>
 <!DOCTYPE html>
-<html>
+<html style="height: 100%;">
 <head>
 	<meta charset=utf-8 />
 	<title><?php _e("MAP"); ?></title>
@@ -274,12 +274,12 @@ if (getOrDefault("output", null) != "iframe") {
 <?php echo $js; ?>
 	</script>
 </head>
-<body>
+<body style="height: 100%; margin: 0px; padding: 0px;">
 	<div id="wusmap"></div>
 <?php if ($show_big_map) { ?>
-	<div style="clear:both; font-size:0.8em; font-style:italic;"><?php echo sprintf(__("MAP_LINK_BIG_MAP"), getBiggerMapUrl()); ?></div>
+	<div style="clear:both; font-size:0.8em; font-style:italic;"><?php echo sprintf(__("MAP_LINK_BIG_MAP"), "href='" . getBiggerMapUrl() . "' target='_parent'"); ?></div>
 <?php } if ($show_powered) { ?>
-	<div style="clear:both; font-size:0.8em; font-style:italic;"><?php echo sprintf(__("MAP_LINK_POWERED"), "http://lverre.github.com/wusmap"); ?></div>
+	<div style="clear:both; font-size:0.8em; font-style:italic;"><?php echo sprintf(__("MAP_LINK_POWERED"), "href='http://lverre.github.com/wusmap' target='_parent'"); ?></div>
 <?php } ?>
 </body>
 </html>
