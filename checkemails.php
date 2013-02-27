@@ -45,9 +45,9 @@ function checkEmails() {
 		}
 	}
 	if ($output == "") {
-		_e("CHECK_EMAILS_NONE");
+		echo __("CHECK_EMAILS_NONE");
 	} else {
-		_e("CHECK_EMAILS_PARSED") . "\n<ul>\n" . $output . "</ul>";
+		echo __("CHECK_EMAILS_PARSED") . "\n<ul>\n" . $output . "</ul>";
 	}
 }
 
