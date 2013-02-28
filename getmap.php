@@ -109,7 +109,7 @@ function getMarker($name, $lat, $lon, $time, $heading, $speed, $dist_to_prev, $a
 	$content .= getRow("<span title='" . __("MAP_ETA_TOOLTIP") . "'>" . __("MAP_ETA_TITLE") . "</span>:", $eta != null ? date($DATE_FORMAT, $eta) : null);
 	$content .= "</table>";
 	
-	$title = sprintf(__("MAP_TITLE_FORMAT"), $name, $time);
+	$title = $time != null ? sprintf(__("MAP_TITLE_FORMAT"), $name, $time) : $name;
 	
 	return "getMarker(map, $lat, $lon, \"$name\", \"$title\", \"$content\");";
 }
@@ -126,9 +126,8 @@ function getPointMarker($asset, $point, $prev_point, $dest_lat, $dest_lon) {
 		$interval = $now - strtotime($prev_point['time']);
 		if ($interval > 0) {
 			$avg_speed_since_prev = round($dist_to_prev / ($interval / 3600), 1);
-			$speed = $avg_speed_since_prev;
+			if ($avg_speed_since_prev > 0) $speed = $avg_speed_since_prev;
 		}
-		$dist_to_prev = round($dist_to_prev, 1);
 	}
 	
 	$dist_to_dest = null;
@@ -136,7 +135,7 @@ function getPointMarker($asset, $point, $prev_point, $dest_lat, $dest_lon) {
 	$remaining = null;
 	if ($dest_lat != null && $dest_lon != null) {
 		$dist_to_dest = getDist($point['latitude'], $point['longitude'], $dest_lat, $dest_lon);
-		if ($dist_to_dest >= 5 && $point['speed'] > 0) {
+		if ($dist_to_dest >= 5 && $speed > 0) {
 			$remaining_seconds = round(($dist_to_dest / $speed) * 3600);
 			$eta = $now + $remaining_seconds;
 			$days = floor($remaining_seconds / 86400);
@@ -144,7 +143,6 @@ function getPointMarker($asset, $point, $prev_point, $dest_lat, $dest_lon) {
 			$hours = round($remaining_seconds / 3600);
 			$remaining = sprintf(__("MAP_REMAINING_FORMAT"), $days, $hours);
 		}
-		$dist_to_dest = round($dist_to_dest, 1);
 	}
 	
 	return getMarker($asset['name'], $point['latitude'], $point['longitude'], $now, $point['heading'], $point['speed'], $dist_to_prev, $avg_speed_since_prev, $dist_to_dest, $eta, $remaining);
@@ -196,7 +194,7 @@ if ($dest_lat != null && $dest_lon != null) {
 	if ($dest_lat > $max_lat) $max_lat = $dest_lat;
 	if ($dest_lon < $min_lon) $min_lon = $dest_lon;
 	if ($dest_lon > $max_lon) $max_lon = $dest_lon;
-	$markers .= getMarker("'" . $dest_name . "'", $dest_lat, $dest_lon, null, null, null, null, null, null, null, null) . "\n";
+	$markers .= getMarker($dest_name, $dest_lat, $dest_lon, null, null, null, null, null, null, null, null) . "\n";
 } else {
 	// Just in case...
 	$dest_lat = null;
