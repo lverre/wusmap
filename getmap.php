@@ -94,8 +94,10 @@ function getPointMarker($asset, $point, $prev_point, $dest_lat, $dest_lon) {
 	if ($prev_point != null) {
 		$dist_to_prev = getDist($point['latitude'], $point['longitude'], $prev_point['latitude'], $prev_point['longitude']);
 		$interval = $now - strtotime($prev_point['time']);
-		$avg_speed_since_prev = round($dist_to_prev / ($interval / 3600), 1);
-		$speed = $avg_speed_since_prev;
+		if ($interval > 0) {
+			$avg_speed_since_prev = round($dist_to_prev / ($interval / 3600), 1);
+			$speed = $avg_speed_since_prev;
+		}
 		$dist_to_prev = round($dist_to_prev, 1);
 	}
 	
