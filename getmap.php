@@ -167,7 +167,7 @@ $map_type = "google.maps.MapTypeId." . $map_type;
 
 $asset = executeSQLOne("select * from " . $CONFIG['db_prefix'] . "assets where id=" . $asset_id);
 if ($asset == null) {
-	die("There is no asset corresponding to that id!");
+	die(__("MAP_SQL_BOAT_INVALID"));
 }
 
 $sql = "select * from " . $CONFIG['db_prefix'] . "points where asset_id=" . $asset_id;
@@ -180,7 +180,7 @@ if ($max_date != null) {
 $sql .= " order by time asc";
 $points = executeSQL($sql);
 if ($points->num_rows == 0) {
-	die("There is no point for that asset!");
+	die(__("MAP_SQL_NO_POINT"));
 }
 
 $add_points = "";
