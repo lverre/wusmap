@@ -234,10 +234,14 @@ if ($zoom != null) {
 		$center_lon = ($max_lon + $min_lon) / 2;
 	}
 	
-	$dist = 
-		(6371 * acos(sin($min_lat / 57.2958) * sin($max_lat / 57.2958) + 
-		(cos($min_lat / 57.2958) * cos($max_lat / 57.2958) * cos(($max_lon / 57.2958) - ($min_lon / 57.2958)))));
-	$zoom = floor(8 - log(1.6446 * $dist / sqrt(2 * ($width * $height))) / log(2));
+	// 256 is GLOBE_WIDTH, a constant in Google Map projection
+	// 0.69... = ln2
+	// *1.1 is to be sure we show everything
+	$angle_lon = ($max_lon - $min_lon) * 1.1;
+	$angle_lat = ($max_lat - $min_lat) * 1.1;
+	$zoom = min(
+		round(log($width * 360 / $angle_lon / 256) / 0.69314718055994530941723212145818),
+		round(log($height * 360 / $angle_lat / 256) / 0.69314718055994530941723212145818));
 }
 	
 $js = "function wusmapInit() {
