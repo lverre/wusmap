@@ -232,6 +232,12 @@ while ($asset = $assets->fetch_assoc()) {
 		<label for="show_big_map"><?php _e("GET_MAP_MISC_BIG_MAP_TITLE"); ?></label>
 	</td>
 </tr>
+<tr id="misc_big_map_tr">
+	<td colspan="2">
+		<input type="checkbox" name="show_weather" id="show_weather" checked="checked" />
+		<label for="show_weather"><?php _e("GET_MAP_MISC_WEATHER_TITLE"); ?></label>
+	</td>
+</tr>
 </table>
 </div>
 <div style="clear: both; margin: 8px auto 8px auto; width: 120px;">

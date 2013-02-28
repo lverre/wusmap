@@ -120,6 +120,7 @@ function getPointMarker($asset, $point, $prev_point, $dest_lat, $dest_lon) {
 
 function getMap($map_div_id, $width, $height, $zoom, $center_lat, $center_lon, $navigation_control, $mapType_control, $scale_control, $map_type, $route_color, $route_opacity, $route_weight, $asset_id, $min_date, $max_date, $first_marker, $last_marker, $marker_every, $dest_name, $dest_lat, $dest_lon) {
 	global $CONFIG;
+	global $zoom, $center_lat, $center_lon;
 	$map_type = "google.maps.MapTypeId." . $map_type;
 	
 	$asset = executeSQLOne("select * from " . $CONFIG['db_prefix'] . "assets where id=" . $asset_id);
@@ -253,6 +254,7 @@ $dest_name = getOrDefault("destination_name", "Destination");
 $dest_lat = getOrDefault("destination_lat", null);
 $dest_lon = getOrDefault("destination_lon", null);
 $show_powered = getOrDefault("show_powered", null) == 'on';
+$show_weather = getOrDefault("show_weather", null) == 'on';
 $show_big_map = getOrDefault("show_big_map", null) == 'on';
 
 $js = getMap($map_div_id, $width, $height, $zoom, $center_lat, $center_lon, $navigation_control, $map_type_control, $scale_control, $map_type, $route_color, $route_opacity, $route_weight, $asset_id, $min_date, $max_date, $first_marker, $last_marker, $marker_every, $dest_name, $dest_lat, $dest_lon);
@@ -278,6 +280,8 @@ if (getOrDefault("output", null) != "iframe") {
 	<div id="wusmap"></div>
 <?php if ($show_big_map) { ?>
 	<div style="clear:both; font-size:0.8em; font-style:italic;"><?php echo sprintf(__("MAP_LINK_BIG_MAP"), "href='" . getBiggerMapUrl() . "' target='_parent'"); ?></div>
+<?php } if ($show_weather) { ?>
+	<div style="clear:both; font-size:0.8em; font-style:italic;"><?php echo sprintf(__("MAP_LINK_WEATHER"), "href='http://www.windfinder.com/weather-maps/forecast#$zoom/$center_lat/$center_lon' target='_parent'"); ?></div>
 <?php } if ($show_powered) { ?>
 	<div style="clear:both; font-size:0.8em; font-style:italic;"><?php echo sprintf(__("MAP_LINK_POWERED"), "href='http://lverre.github.com/wusmap' target='_parent'"); ?></div>
 <?php } ?>
