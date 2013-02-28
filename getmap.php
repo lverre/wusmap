@@ -31,6 +31,36 @@ include_once "general.php";
 
 $DATE_FORMAT = "Y-m-d H:i:s";
 
+/* Get GET parameters */
+
+$map_div_id = getOrDefault("map_div_id", "wusmap");
+$width = getOrDefault("width", 500);
+$height = getOrDefault("height", 500);
+$zoom = getOrDefault("zoom", null);
+$center_lat = getOrDefault("center_lat", null);
+$center_lon = getOrDefault("center_lon", null);
+$navigation_control = getOrDefault("navigation_control", null) == 'on' ? 'true' : 'false';
+$map_type_control = getOrDefault("map_type_control", null) == 'on' ? 'true' : 'false';
+$scale_control = getOrDefault("scale_control", null) == 'on' ? 'true' : 'false';
+$map_type = getOrDefault("map_type", "HYBRID");
+$route_color = getOrDefault("route_color", "green");
+$route_opacity = getOrDefault("route_opacity", 1);
+$route_weight = getOrDefault("route_weight", 2);
+$asset_id = getOrDefault("asset_id", null);
+$min_date = getOrDefault("min_date", null);
+$max_date = getOrDefault("max_date", null);
+$first_marker = getOrDefault("first_marker", null) == 'on';
+$last_marker = getOrDefault("last_marker", null) == 'on';
+$marker_every = getOrDefault("marker_every", 0);
+$dest_name = getOrDefault("destination_name", "Destination");
+$dest_lat = getOrDefault("destination_lat", null);
+$dest_lon = getOrDefault("destination_lon", null);
+$show_powered = getOrDefault("show_powered", null) == 'on';
+$show_weather = getOrDefault("show_weather", null) == 'on';
+$show_big_map = getOrDefault("show_big_map", null) == 'on';
+
+/* Tools */
+
 function getDist($lat1, $lon1, $lat2, $lon2) {
 	$theta = $lon1 - $lon2;
 	$arc = acos(sin(deg2rad($lat1)) * sin(deg2rad($lat2)) +  cos(deg2rad($lat1)) * cos(deg2rad($lat2)) * cos(deg2rad($theta)));
@@ -120,87 +150,99 @@ function getPointMarker($asset, $point, $prev_point, $dest_lat, $dest_lon) {
 	return getMarker($asset['name'], $point['latitude'], $point['longitude'], $now, $point['heading'], $point['speed'], $dist_to_prev, $avg_speed_since_prev, $dist_to_dest, $eta, $remaining);
 }
 
-function getMap($map_div_id, $width, $height, $zoom, $center_lat, $center_lon, $navigation_control, $mapType_control, $scale_control, $map_type, $route_color, $route_opacity, $route_weight, $asset_id, $min_date, $max_date, $first_marker, $last_marker, $marker_every, $dest_name, $dest_lat, $dest_lon) {
-	global $CONFIG;
-	global $zoom, $center_lat, $center_lon;
-	$map_type = "google.maps.MapTypeId." . $map_type;
-	
-	$asset = executeSQLOne("select * from " . $CONFIG['db_prefix'] . "assets where id=" . $asset_id);
-	if ($asset == null) {
-		die("There is no asset corresponding to that id!");
-	}
-	
-	$sql = "select * from " . $CONFIG['db_prefix'] . "points where asset_id=" . $asset_id;
-	if ($min_date != null) {
-		$sql .= " and time >= '$min_date'";
-	}
-	if ($max_date != null) {
-		$sql .= " and time <= '$max_date'";
-	}
-	$sql .= " order by time asc";
-	$points = executeSQL($sql);
-	if ($points->num_rows == 0) {
-		die("There is no point for that asset!");
-	}
-	
-	$add_points = "";
-	$markers = "";
-	$min_lat = 90;
-	$max_lat = -90;
-	$min_lon = 180;
-	$max_lon = -180;
-	if ($dest_lat != null && $dest_lon != null) {
-		if ($dest_lat < $min_lat) $min_lat = $dest_lat;
-		if ($dest_lat > $max_lat) $max_lat = $dest_lat;
-		if ($dest_lon < $min_lon) $min_lon = $dest_lon;
-		if ($dest_lon > $max_lon) $max_lon = $dest_lon;
-		$markers .= getMarker("'" . $dest_name . "'", $dest_lat, $dest_lon, null, null, null, null, null, null, null, null) . "\n";
-	} else {
-		// Just in case...
-		$dest_lat = null;
-		$dest_lon = null;
-	}
-	$last_point = null;
-	$prev_point = null;
-	$index = 0;
-	while ($point = $points->fetch_assoc()) {
-		$prev_point = $last_point;
-		$last_point = $point;
-		$lat = $point['latitude'];
-		$lon = $point['longitude'];
-		$add_points .= "
-	addPoint(points, " . $lat . ", " . $lon . ");";
-		if (($first_marker && $index == 0) || ($marker_every > 0 && ($index % $marker_every) == 0)) {
-			$markers .= "	" . getPointMarker($asset, $point, $prev_point, $dest_lat, $dest_lon) . "\n";
+function getBiggerMapUrl() {
+	$url = "http://$_SERVER[HTTP_HOST]$_SERVER[PHP_SELF]?";
+	foreach ($_REQUEST as $key => $value) {
+		if ($key == 'height' || $key == 'width') {
+			$value = '100%';
 		}
-		if ($lat < $min_lat) $min_lat = $lat;
-		if ($lat > $max_lat) $max_lat = $lat;
-		if ($lon < $min_lon) $min_lon = $lon;
-		if ($lon > $max_lon) $max_lon = $lon;
-		$index++;
+		if ($key != 'show_powered' && $key != 'show_big_map' && $key != 'show_weather') {
+			$url .= $key . "=" . urlencode($value) . "&";
+		}
 	}
-	if ($last_marker && !($first_marker && $index == 1) && !($marker_every > 0 && (($index - 1) % $marker_every) == 0)) {
-		$markers .= "	" . getPointMarker($asset, $last_point, $prev_point, $dest_lat, $dest_lon) . "\n";
+	return $url;
+}
+
+/* Get Script */
+
+$map_type = "google.maps.MapTypeId." . $map_type;
+
+$asset = executeSQLOne("select * from " . $CONFIG['db_prefix'] . "assets where id=" . $asset_id);
+if ($asset == null) {
+	die("There is no asset corresponding to that id!");
+}
+
+$sql = "select * from " . $CONFIG['db_prefix'] . "points where asset_id=" . $asset_id;
+if ($min_date != null) {
+	$sql .= " and time >= '$min_date'";
+}
+if ($max_date != null) {
+	$sql .= " and time <= '$max_date'";
+}
+$sql .= " order by time asc";
+$points = executeSQL($sql);
+if ($points->num_rows == 0) {
+	die("There is no point for that asset!");
+}
+
+$add_points = "";
+$markers = "";
+$min_lat = 90;
+$max_lat = -90;
+$min_lon = 180;
+$max_lon = -180;
+if ($dest_lat != null && $dest_lon != null) {
+	if ($dest_lat < $min_lat) $min_lat = $dest_lat;
+	if ($dest_lat > $max_lat) $max_lat = $dest_lat;
+	if ($dest_lon < $min_lon) $min_lon = $dest_lon;
+	if ($dest_lon > $max_lon) $max_lon = $dest_lon;
+	$markers .= getMarker("'" . $dest_name . "'", $dest_lat, $dest_lon, null, null, null, null, null, null, null, null) . "\n";
+} else {
+	// Just in case...
+	$dest_lat = null;
+	$dest_lon = null;
+}
+$last_point = null;
+$prev_point = null;
+$index = 0;
+while ($point = $points->fetch_assoc()) {
+	$prev_point = $last_point;
+	$last_point = $point;
+	$lat = $point['latitude'];
+	$lon = $point['longitude'];
+	$add_points .= "
+addPoint(points, " . $lat . ", " . $lon . ");";
+	if (($first_marker && $index == 0) || ($marker_every > 0 && ($index % $marker_every) == 0)) {
+		$markers .= "	" . getPointMarker($asset, $point, $prev_point, $dest_lat, $dest_lon) . "\n";
+	}
+	if ($lat < $min_lat) $min_lat = $lat;
+	if ($lat > $max_lat) $max_lat = $lat;
+	if ($lon < $min_lon) $min_lon = $lon;
+	if ($lon > $max_lon) $max_lon = $lon;
+	$index++;
+}
+if ($last_marker && !($first_marker && $index == 1) && !($marker_every > 0 && (($index - 1) % $marker_every) == 0)) {
+	$markers .= "	" . getPointMarker($asset, $last_point, $prev_point, $dest_lat, $dest_lon) . "\n";
+}
+
+if ($zoom != null) {
+	if ($center_lat == null) {
+		$center_lat = $last_point['latitude'];
+		$center_lon = $last_point['longitude'];
+	}
+} else {
+	if ($center_lat == null) {
+		$center_lat = ($max_lat + $min_lat) / 2;
+		$center_lon = ($max_lon + $min_lon) / 2;
 	}
 	
-	if ($zoom != null) {
-		if ($center_lat == null) {
-			$center_lat = $last_point['latitude'];
-			$center_lon = $last_point['longitude'];
-		}
-	} else {
-		if ($center_lat == null) {
-			$center_lat = ($max_lat + $min_lat) / 2;
-			$center_lon = ($max_lon + $min_lon) / 2;
-		}
-		
-		$dist = 
-			(6371 * acos(sin($min_lat / 57.2958) * sin($max_lat / 57.2958) + 
-			(cos($min_lat / 57.2958) * cos($max_lat / 57.2958) * cos(($max_lon / 57.2958) - ($min_lon / 57.2958)))));
-		$zoom = floor(8 - log(1.6446 * $dist / sqrt(2 * ($width * $height))) / log(2));
-	}
+	$dist = 
+		(6371 * acos(sin($min_lat / 57.2958) * sin($max_lat / 57.2958) + 
+		(cos($min_lat / 57.2958) * cos($max_lat / 57.2958) * cos(($max_lon / 57.2958) - ($min_lon / 57.2958)))));
+	$zoom = floor(8 - log(1.6446 * $dist / sqrt(2 * ($width * $height))) / log(2));
+}
 	
-	return "function wusmapInit() {
+$js = "function wusmapInit() {
 	var mapDiv = document.getElementById('$map_div_id');
 	mapDiv.style.width = '$width';
 	mapDiv.style.height = '$height';
@@ -210,7 +252,7 @@ function getMap($map_div_id, $width, $height, $zoom, $center_lat, $center_lon, $
 	var map = createMap(
 		'$map_div_id', 
 		$zoom, $center_lat, $center_lon, 
-		$navigation_control, $mapType_control, $scale_control, 
+		$navigation_control, $map_type_control, $scale_control, 
 		$map_type, 
 		'$route_color', $route_opacity, $route_weight, points);
 
@@ -218,48 +260,8 @@ function getMap($map_div_id, $width, $height, $zoom, $center_lat, $center_lon, $
 }
 addEvent(window, 'load', wusmapInit);
 ";
-}
 
-function getBiggerMapUrl() {
-	$url = "http://$_SERVER[HTTP_HOST]$_SERVER[PHP_SELF]?";
-	foreach ($_REQUEST as $key => $value) {
-		if ($key == 'height' || $key == 'width') {
-			$value = '100%';
-		}
-		if ($key != 'show_powered' && $key != 'show_big_map') {
-			$url .= $key . "=" . urlencode($value) . "&";
-		}
-	}
-	return $url;
-}
-
-$map_div_id = getOrDefault("map_div_id", "wusmap");
-$width = getOrDefault("width", 500);
-$height = getOrDefault("height", 500);
-$zoom = getOrDefault("zoom", null);
-$center_lat = getOrDefault("center_lat", null);
-$center_lon = getOrDefault("center_lon", null);
-$navigation_control = getOrDefault("navigation_control", null) == 'on' ? 'true' : 'false';
-$map_type_control = getOrDefault("map_type_control", null) == 'on' ? 'true' : 'false';
-$scale_control = getOrDefault("scale_control", null) == 'on' ? 'true' : 'false';
-$map_type = getOrDefault("map_type", "HYBRID");
-$route_color = getOrDefault("route_color", "green");
-$route_opacity = getOrDefault("route_opacity", 1);
-$route_weight = getOrDefault("route_weight", 2);
-$asset_id = getOrDefault("asset_id", null);
-$min_date = getOrDefault("min_date", null);
-$max_date = getOrDefault("max_date", null);
-$first_marker = getOrDefault("first_marker", null) == 'on';
-$last_marker = getOrDefault("last_marker", null) == 'on';
-$marker_every = getOrDefault("marker_every", 0);
-$dest_name = getOrDefault("destination_name", "Destination");
-$dest_lat = getOrDefault("destination_lat", null);
-$dest_lon = getOrDefault("destination_lon", null);
-$show_powered = getOrDefault("show_powered", null) == 'on';
-$show_weather = getOrDefault("show_weather", null) == 'on';
-$show_big_map = getOrDefault("show_big_map", null) == 'on';
-
-$js = getMap($map_div_id, $width, $height, $zoom, $center_lat, $center_lon, $navigation_control, $map_type_control, $scale_control, $map_type, $route_color, $route_opacity, $route_weight, $asset_id, $min_date, $max_date, $first_marker, $last_marker, $marker_every, $dest_name, $dest_lat, $dest_lon);
+/* Output */
 
 if (getOrDefault("output", null) != "iframe") {
 	echo $js;
