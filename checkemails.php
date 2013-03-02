@@ -39,7 +39,7 @@ function checkEmails() {
 			$header = imap_headerinfo($connection, $index);
 			if ($header->Unseen == 'U' && $header->from[0]->host == 'advanced-tracking.com' && !strncmp($header->subject, 'XML Position', 12)) {
 				$output .= "<li>" . $header->date . "</li>\n";
-				$result = parseEmail(stripslashes(imap_body($connection, $index)));
+				$result = parseEmail(trim(stripslashes(imap_body($connection, $index))));
 				executeSQL("insert into " . $CONFIG['db_prefix'] . "points ( asset_id, latitude, longitude, time, heading, speed ) values ( " . $result['asset_id'] . ", " . $result['latitude'] . ", " . $result['longitude'] . ", '" . $result['datetime'] . "', " . $result['heading'] . ", " . $result['speed'] . " )");
 			}
 		}
