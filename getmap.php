@@ -214,9 +214,9 @@ function getPointMarker($asset, $point, $prev_point, $dest_lat, $dest_lon) {
 		if ($dist_to_dest >= 5 && $eta_speed > 0) {
 			$remaining_seconds = round(($dist_to_dest / $eta_speed) * 3600);
 			$eta = $now + $remaining_seconds;
-			$days = floor($remaining_seconds / 86400);
-			$remaining_seconds -= $days * 86400;
 			$hours = round($remaining_seconds / 3600);
+			$days = floor($hours / 24);
+			$hours -= $days * 24;
 			$remaining = sprintf(__("MAP_REMAINING_FORMAT"), $days, $hours);
 			$vmg = getVMG($speed, $heading, $bearing);
 		}
