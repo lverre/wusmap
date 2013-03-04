@@ -62,18 +62,84 @@ $show_big_map = getOrDefault("show_big_map", null) == 'on';
 /* Tools */
 
 function getDist($lat1, $lon1, $lat2, $lon2) {
-	$theta = $lon1 - $lon2;
-	$arc = acos(sin(deg2rad($lat1)) * sin(deg2rad($lat2)) +  cos(deg2rad($lat1)) * cos(deg2rad($lat2)) * cos(deg2rad($theta)));
+	$latr1 = deg2rad($lat1);
+	$latr2 = deg2rad($lat2);
+	$theta = deg2rad($lon1 - $lon2);
+	$arc = acos(sin($latr1) * sin($latr2) +  cos($latr1) * cos($latr2) * cos($theta));
 	return $arc * 3440.0696544276457883369330453564;// Earth radius in nautical mile
 }
 
-function getRow($name, $value, $format=null) {
-	if ($value != null) {
-		if ($format != null) $value = sprintf($format, $value);
-		return "<tr><td class='wusmap-infobox-description-key'>$name</td><td class='wusmap-infobox-description-value'>$value</td>";
+function getHeading($lat1, $lon1, $lat2, $lon2) {
+	$latr1 = deg2rad($lat1);
+	$latr2 = deg2rad($lat2);
+	$lonr1 = deg2rad($lon1);
+	$lonr2 = deg2rad($lon2);
+	return (rad2deg(atan2(sin($lonr2 - $lonr1) * cos($latr2), cos($latr1) * sin($latr2) - sin($latr1) * cos($latr2) * cos($lonr2 - $lonr1))) + 360) % 360;
+}
+
+function headingToString($heading) {
+	$heading = $heading % 360;
+	if ($heading >= 348.75 || $heading < 11.25) {
+		return __("SH_CARD_N");
+	} else if ($heading < 33.75) {
+		return __("SH_CARD_N") . __("SH_CARD_N") . __("SH_CARD_E");
+	} else if ($heading < 56.25) {
+		return __("SH_CARD_N") . __("SH_CARD_E");
+	} else if ($heading < 78.75) {
+		return __("SH_CARD_E") . __("SH_CARD_N") . __("SH_CARD_E");
+	} else if ($heading < 101.25) {
+		return __("SH_CARD_E");
+	} else if ($heading < 123.75) {
+		return __("SH_CARD_E") . __("SH_CARD_S") . __("SH_CARD_E");
+	} else if ($heading < 146.25) {
+		return __("SH_CARD_S") . __("SH_CARD_E");
+	} else if ($heading < 168.75) {
+		return __("SH_CARD_S") . __("SH_CARD_S") . __("SH_CARD_E");
+	} else if ($heading < 191.25) {
+		return __("SH_CARD_S");
+	} else if ($heading < 213.75) {
+		return __("SH_CARD_S") . __("SH_CARD_S") . __("SH_CARD_W");
+	} else if ($heading < 236.25) {
+		return __("SH_CARD_S") . __("SH_CARD_W");
+	} else if ($heading < 258.75) {
+		return __("SH_CARD_W") . __("SH_CARD_S") . __("SH_CARD_W");
+	} else if ($heading < 281.25) {
+		return __("SH_CARD_W");
+	} else if ($heading < 303.75) {
+		return __("SH_CARD_W") . __("SH_CARD_N") . __("SH_CARD_W");
+	} else if ($heading < 326.25) {
+		return __("SH_CARD_N") . __("SH_CARD_W");
+	} else if ($heading < 348.75) {
+		return __("SH_CARD_N") . __("SH_CARD_N") . __("SH_CARD_W");
 	} else {
+		return __("SH_NA");// Should NEVER happen
+	}
+}
+
+function getVMG($speed, $heading, $bearing) {
+	return $speed * cos(deg2rad($bearing) - deg2rad($heading));
+}
+
+function getRow($name, $format, $value1, $value2 = null, $value3 = null) {
+	if ($name == null || $value1 == null) {
 		return "";
 	}
+	
+	$value = null;
+	if ($format != null) {
+		if ($value2 != null) {
+			if ($value3 != null) {
+				$value = sprintf($format, $value1, $value2, $value3);
+			} else {
+				$value = sprintf($format, $value1, $value2);
+			}
+		} else {
+			$value = sprintf($format, $value1);
+		}
+	} else {
+		$value = $value1;
+	}
+	return "<tr><td class='wusmap-infobox-description-key'>$name</td><td class='wusmap-infobox-description-value'>$value</td>";
 }
 
 function getCoord($coord, $is_lat) {
@@ -91,22 +157,22 @@ function getCoord($coord, $is_lat) {
 	return $deg . "&deg;" . $min . "'" . $sec . "'' " . $card;
 }
 
-function getMarker($name, $lat, $lon, $time, $heading, $speed, $dist_to_prev, $avg_speed_since_prev, $dist_to_dest, $eta, $remaining) {
+function getMarker($name, $lat, $lon, $time, $heading, $speed, $vmg, $dist_to_prev, $avg_speed_since_prev, $avg_vmg, $dist_to_dest, $eta, $remaining) {
 	global $MESSAGES;
 	global $DATE_FORMAT;
 	$time = $time != null ? date($DATE_FORMAT, $time) : null;
 	
 	$content = "<table>";
-	$content .= getRow(__("MAP_DATETIME_TITLE"), $time);
-	$content .= getRow(__("SH_LAT_TITLE"), getCoord($lat, true));
-	$content .= getRow(__("SH_LON_TITLE"), getCoord($lon, false));
-	$content .= getRow(__("SH_HEADING_TITLE"), $heading, __("MAP_HEADING_FORMAT"));
-	$content .= getRow(__("SH_SPEED_TITLE"), $speed, __("MAP_SPEED_FORMAT"));
-	$content .= getRow(__("MAP_DIST_TO_PREV_TITLE"), $dist_to_prev, __("MAP_DIST_FORMAT"));
-	$content .= getRow(__("MAP_SPEED_AVG_TITLE"), $avg_speed_since_prev, __("MAP_SPEED_FORMAT"));
-	$content .= getRow(__("MAP_DIST_TO_DEST_TITLE"), $dist_to_dest, __("MAP_DIST_FORMAT"));
-	$content .= getRow(__("MAP_REMAINING_TITLE"), $remaining);
-	$content .= getRow("<span title='" . __("MAP_ETA_TOOLTIP") . "'>" . __("MAP_ETA_TITLE") . "</span>:", $eta != null ? date($DATE_FORMAT, $eta) : null);
+	$content .= getRow(__("MAP_DATETIME_TITLE"), null, $time);
+	$content .= getRow(__("SH_LAT_TITLE"), null, getCoord($lat, true));
+	$content .= getRow(__("SH_LON_TITLE"), null, getCoord($lon, false));
+	$content .= getRow(__("SH_HEADING_TITLE"), __("MAP_HEADING_FORMAT"), $heading, $heading != null ? headingToString($heading) : null);
+	$content .= $vmg != null ? getRow(__("SH_SPEED_TITLE"), __("MAP_SPEED_VMG_FORMAT"), $speed, $vmg) : getRow(__("SH_SPEED_TITLE"), __("MAP_SPEED_FORMAT"), $speed);
+	$content .= getRow(__("MAP_DIST_TO_PREV_TITLE"), __("MAP_DIST_FORMAT"), $dist_to_prev);
+	$content .= $avg_vmg != null ? getRow(__("MAP_SPEED_AVG_TITLE"), __("MAP_SPEED_VMG_FORMAT"), $avg_speed_since_prev, $avg_vmg) : getRow(__("MAP_SPEED_AVG_TITLE"), __("MAP_SPEED_FORMAT"), $avg_speed_since_prev);
+	$content .= getRow(__("MAP_DIST_TO_DEST_TITLE"), __("MAP_DIST_FORMAT"), $dist_to_dest);
+	$content .= getRow(__("MAP_REMAINING_TITLE"), null, $remaining);
+	$content .= getRow("<span title='" . __("MAP_ETA_TOOLTIP") . "'>" . __("MAP_ETA_TITLE") . "</span>", null, $eta != null ? date($DATE_FORMAT, $eta) : null);
 	$content .= "</table>";
 	
 	$title = $time != null ? sprintf(__("MAP_TITLE_FORMAT"), $name, $time) : $name;
@@ -116,36 +182,47 @@ function getMarker($name, $lat, $lon, $time, $heading, $speed, $dist_to_prev, $a
 
 function getPointMarker($asset, $point, $prev_point, $dest_lat, $dest_lon) {
 	global $MESSAGES;
+	$lat = $point['latitude'];
+	$lon = $point['longitude'];
 	$now = strtotime($point['time']);
+	$heading = $point['heading'];
 	$speed = $point['speed'];
+	$eta_speed = $speed;
 	
 	$dist_to_prev = null;
-	$avg_speed_since_prev = null;
+	$avg_speed = null;
+	$avg_vmg = null;
 	if ($prev_point != null) {
-		$dist_to_prev = getDist($point['latitude'], $point['longitude'], $prev_point['latitude'], $prev_point['longitude']);
+		$prev_lat = $prev_point['latitude'];
+		$prev_lon = $prev_point['longitude'];
+		$dist_to_prev = getDist($prev_lat, $prev_lon, $lat, $lon);
 		$interval = $now - strtotime($prev_point['time']);
 		if ($interval > 0) {
-			$avg_speed_since_prev = round($dist_to_prev / ($interval / 3600), 1);
-			if ($avg_speed_since_prev > 0) $speed = $avg_speed_since_prev;
+			$avg_speed = round($dist_to_prev / ($interval / 3600), 1);
+			if ($avg_speed > 0) $eta_speed = $avg_speed;
+			$avg_vmg = getVMG($avg_speed, getHeading($prev_lat, $prev_lon, $lat, $lon), getHeading($prev_lat, $prev_lon, $dest_lat, $dest_lon));
 		}
 	}
 	
 	$dist_to_dest = null;
 	$eta = null;
 	$remaining = null;
+	$vmg = null;
 	if ($dest_lat != null && $dest_lon != null) {
+		$bearing = getHeading($lat, $lon, $dest_lat, $dest_lon);
 		$dist_to_dest = getDist($point['latitude'], $point['longitude'], $dest_lat, $dest_lon);
-		if ($dist_to_dest >= 5 && $speed > 0) {
-			$remaining_seconds = round(($dist_to_dest / $speed) * 3600);
+		if ($dist_to_dest >= 5 && $eta_speed > 0) {
+			$remaining_seconds = round(($dist_to_dest / $eta_speed) * 3600);
 			$eta = $now + $remaining_seconds;
 			$days = floor($remaining_seconds / 86400);
 			$remaining_seconds -= $days * 86400;
 			$hours = round($remaining_seconds / 3600);
 			$remaining = sprintf(__("MAP_REMAINING_FORMAT"), $days, $hours);
+			$vmg = getVMG($speed, $heading, $bearing);
 		}
 	}
 	
-	return getMarker($asset['name'], $point['latitude'], $point['longitude'], $now, $point['heading'], $point['speed'], $dist_to_prev, $avg_speed_since_prev, $dist_to_dest, $eta, $remaining);
+	return getMarker($asset['name'], $lat, $lon, $now, $heading, $speed, $vmg, $dist_to_prev, $avg_speed, $avg_vmg, $dist_to_dest, $eta, $remaining);
 }
 
 function getBiggerMapUrl() {
@@ -194,7 +271,7 @@ if ($dest_lat != null && $dest_lon != null) {
 	if ($dest_lat > $max_lat) $max_lat = $dest_lat;
 	if ($dest_lon < $min_lon) $min_lon = $dest_lon;
 	if ($dest_lon > $max_lon) $max_lon = $dest_lon;
-	$markers .= getMarker($dest_name, $dest_lat, $dest_lon, null, null, null, null, null, null, null, null) . "\n";
+	$markers .= getMarker($dest_name, $dest_lat, $dest_lon, null, null, null, null, null, null, null, null, null, null) . "\n";
 } else {
 	// Just in case...
 	$dest_lat = null;
