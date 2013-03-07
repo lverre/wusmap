@@ -188,7 +188,7 @@ function getPointMarker($asset, $point, $prev_point, $dest_lat, $dest_lon) {
 	$now = strtotime($point['time']);
 	$heading = $point['heading'];
 	$speed = $point['speed'];
-	$eta_speed = $speed;
+	$eta_speed = null;
 	
 	$dist_to_prev = null;
 	$avg_speed = null;
@@ -202,11 +202,11 @@ function getPointMarker($asset, $point, $prev_point, $dest_lat, $dest_lon) {
 		$interval = $now - strtotime($prev_point['time']);
 		if ($interval > 0) {
 			$avg_speed = round($dist_to_prev / ($interval / 3600), 1);
-			if ($avg_speed > 0) {
-				$eta_speed = $avg_speed;
-			}
 			if ($dest_lat != null && $dest_lon != null) {
 				$avg_vmg = getVMG($avg_speed, $prev_heading, getHeading($prev_lat, $prev_lon, $dest_lat, $dest_lon));
+			}
+			if ($avg_vmg > 0) {
+				$eta_speed = $avg_vmg;
 			}
 		}
 	}
@@ -220,13 +220,16 @@ function getPointMarker($asset, $point, $prev_point, $dest_lat, $dest_lon) {
 		$bearing = getHeading($lat, $lon, $dest_lat, $dest_lon);
 		$dist_to_dest = getDist($lat, $lon, $dest_lat, $dest_lon);
 		if ($dist_to_dest >= 5 && $eta_speed > 0) {
+			$vmg = getVMG($speed, $heading, $bearing);
+			if ($eta_speed == null) {
+				$eta_speed = $vmg;
+			}
 			$remaining_seconds = round(($dist_to_dest / $eta_speed) * 3600);
 			$eta = $now + $remaining_seconds;
 			$hours = round($remaining_seconds / 3600);
 			$days = floor($hours / 24);
 			$hours -= $days * 24;
 			$remaining = sprintf(__("MAP_REMAINING_FORMAT"), $days, $hours);
-			$vmg = getVMG($speed, $heading, $bearing);
 		}
 	}
 	
