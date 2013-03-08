@@ -25,8 +25,6 @@
  * @description Gets the map.
  */
 
-if (isset($_GET['lang'])) $lang = $_GET['lang'];
-
 include_once "general.php";
 
 $DATE_FORMAT = "Y-m-d H:i:s";
@@ -225,10 +223,15 @@ function getPointMarker($asset, $point, $prev_point, $first_point, $dest_lat, $d
 	$remaining = null;
 	if ($dist_to_dest >= 5) {
 		if ($first_point != null && $first_point != $point) {
-			$dist_done = getDist($first_point['latitude'], $first_point['longitude'], $lat, $lon);
+			$flat = $first_point['latitude'];
+			$flon = $first_point['longitude'];
+			$dist_done = getDist($flat, $flon, $lat, $lon);
 			$interval = $now - strtotime($first_point['time']);
-			$fspeed = $dist_done / ($interval / 3600);
-			if ($fspeed > 1) $eta_speed = ($fspeed + $speed) / 2;
+			$fvmg = getVMG(
+				$dist_done / ($interval / 3600),
+				getHeading($flat, $flon, $lat, $lon),
+				getHeading($flat, $flon, $dest_lat, $dest_lon));
+			if ($fvmg >= 1) $eta_speed = $fvmg;
 		}
 		if ($eta_speed == null) {
 			$eta_speed = $vmg;
