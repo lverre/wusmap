@@ -25,6 +25,9 @@
  * @description Exports the points to XML.
  */
 
+header("Content-Type: text/xml");
+header("Content-Disposition: inline; filename=\"$filename.xml\";");
+
 echo "<?xml version='1.0' encoding='ANSI' ?>$nl";
 echo "<wusmap>$nl";
 while ($point = $points->fetch_assoc()) {

@@ -25,21 +25,27 @@
  * @description Exports the points to CSV.
  */
 
+if (!isset($_REQUEST["newline"])) $nl = "\r\n";// Default newline is \r\n (RFC 4180)
+$sep = getOrDefault("separator", ",");
+
+header("Content-Type: text/csv");
+header("Content-Disposition: inline; filename=\"$filename.csv\";");
+
 $first_pass = true;
 while ($point = $points->fetch_assoc()) {
-	if ($first_pass) {
-		$title = null;
-		foreach ($point as $key => $value) {
-			if ($title != null) $title .= ",";
-			$title .= $key;
-		}
-		echo $title . "$nl";
-		$first_pass = false;
-	}
+	$title = null;
 	$row = null;
 	foreach ($point as $key => $value) {
-		if ($row != null) $row .= ",";
+		if ($first_pass) {
+			if ($title != null) $title .= $sep;
+			$title .= $key;
+		}
+		if ($row != null) $row .= $sep;
 		$row .= $value;
+	}
+	if ($first_pass) {
+		echo $title . "$nl";
+		$first_pass = false;
 	}
 	echo $row . "$nl";
 }

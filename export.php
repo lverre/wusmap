@@ -71,6 +71,14 @@ if ($points->num_rows == 0) {
 	die(__("MAP_SQL_NO_POINT"));
 }
 
+$filename = "wusmap_$asset_id";
+if ($min_date != null) {
+	$filename .= "_min$min_date";
+}
+if ($max_date != null) {
+	$filename .= "_max$max_date";
+}
+
 include_once "export/$format.php";
 
 ?>
