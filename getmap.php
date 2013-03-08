@@ -181,15 +181,15 @@ function getMarker($name, $lat, $lon, $time, $heading, $speed, $vmg, $dist_to_pr
 	return "getMarker(map, $lat, $lon, \"$name\", \"$title\", \"$content\");";
 }
 
-function getPointMarker($asset, $point, $prev_point, $dest_lat, $dest_lon) {
+function getPointMarker($asset, $point, $prev_point, $first_point, $dest_lat, $dest_lon) {
 	global $MESSAGES;
 	$lat = $point['latitude'];
 	$lon = $point['longitude'];
 	$now = strtotime($point['time']);
 	$heading = $point['heading'];
 	$speed = $point['speed'];
-	$eta_speed = null;
 	
+	// Get the average speed since last point
 	$dist_to_prev = null;
 	$avg_speed = null;
 	$avg_vmg = null;
@@ -205,25 +205,34 @@ function getPointMarker($asset, $point, $prev_point, $dest_lat, $dest_lon) {
 			if ($dest_lat != null && $dest_lon != null) {
 				$avg_vmg = getVMG($avg_speed, $prev_heading, getHeading($prev_lat, $prev_lon, $dest_lat, $dest_lon));
 			}
-			if ($avg_vmg > 0) {
-				$eta_speed = $avg_vmg;
-			}
 		}
 	}
 	
+	// Get the current parameters to the destination
 	$bearing = null;
 	$dist_to_dest = null;
-	$eta = null;
-	$remaining = null;
 	$vmg = null;
 	if ($dest_lat != null && $dest_lon != null) {
 		$bearing = getHeading($lat, $lon, $dest_lat, $dest_lon);
 		$dist_to_dest = getDist($lat, $lon, $dest_lat, $dest_lon);
-		if ($dist_to_dest >= 5 && $eta_speed > 0) {
-			$vmg = getVMG($speed, $heading, $bearing);
-			if ($eta_speed == null) {
-				$eta_speed = $vmg;
-			}
+		if ($dist_to_dest >= 5) $vmg = getVMG($speed, $heading, $bearing);
+	}
+	
+	// Get the ETA
+	$eta_speed = null;
+	$eta = null;
+	$remaining = null;
+	if ($dist_to_dest >= 5) {
+		if ($first_point != null && $first_point != $point) {
+			$dist_done = getDist($first_point['latitude'], $first_point['longitude'], $lat, $lon);
+			$interval = $now - strtotime($first_point['time']);
+			$fspeed = $dist_done / ($interval / 3600);
+			if ($fspeed > 1) $eta_speed = ($fspeed + $speed) / 2;
+		}
+		if ($eta_speed == null) {
+			$eta_speed = $vmg;
+		}
+		if ($eta_speed > 0) {
 			$remaining_seconds = round(($dist_to_dest / $eta_speed) * 3600);
 			$eta = $now + $remaining_seconds;
 			$hours = round($remaining_seconds / 3600);
@@ -288,18 +297,20 @@ if ($dest_lat != null && $dest_lon != null) {
 	$dest_lat = null;
 	$dest_lon = null;
 }
+$first_point = null;
 $last_point = null;
 $prev_point = null;
 $index = 0;
 while ($point = $points->fetch_assoc()) {
 	$prev_point = $last_point;
 	$last_point = $point;
+	if ($first_point == null) $first_point = $point;
 	$lat = $point['latitude'];
 	$lon = $point['longitude'];
 	$add_points .= "
 addPoint(points, " . $lat . ", " . $lon . ");";
 	if (($first_marker && $index == 0) || ($marker_every > 0 && ($index % $marker_every) == 0)) {
-		$markers .= "	" . getPointMarker($asset, $point, $prev_point, $dest_lat, $dest_lon) . "\n";
+		$markers .= "	" . getPointMarker($asset, $point, $prev_point, $first_point, $dest_lat, $dest_lon) . "\n";
 	}
 	if ($lat < $min_lat) $min_lat = $lat;
 	if ($lat > $max_lat) $max_lat = $lat;
@@ -308,7 +319,7 @@ addPoint(points, " . $lat . ", " . $lon . ");";
 	$index++;
 }
 if ($last_marker && !($first_marker && $index == 1) && !($marker_every > 0 && (($index - 1) % $marker_every) == 0)) {
-	$markers .= "	" . getPointMarker($asset, $last_point, $prev_point, $dest_lat, $dest_lon) . "\n";
+	$markers .= "	" . getPointMarker($asset, $last_point, $prev_point, $first_point, $dest_lat, $dest_lon) . "\n";
 }
 
 if ($zoom != null) {
