@@ -39,7 +39,7 @@ include_once "general.php";
 <div style="margin-left:auto; margin-right:auto; width: 648px">
 <h1><?php _e("GET_MAP"); ?></h1>
 <form method="get" action="getmap.php">
-<div style="clear: both; margin: 16px 8px 8px 8px;">
+<div style="clear: both; margin: 8px 8px 8px 8px;">
 <table>
 <tr>
 	<th colspan="2"><?php _e("GET_MAP_GENERAL"); ?></th>
@@ -47,8 +47,8 @@ include_once "general.php";
 <tr>
 	<td><label><?php _e("GET_MAP_OUTPUT_TITLE"); ?></label></td>
 	<td>
-		<input type="radio" name="output" id="output_iframe" value="iframe" onchange="if (this.checked) { setDisabled('map_div_id', true); setVisibility('map_div_id_tr', false); setVisibility('misc_tr', true); setVisibility('misc_powered_tr', true); setVisibility('misc_big_map_tr', true); }" checked="checked" /><label for="output_iframe"><?php _e("GET_MAP_OUTPUT_IFRAME"); ?></label>
-		<input type="radio" name="output" id="output_script" value="script" onchange="if (this.checked) { setDisabled('map_div_id', false); setVisibility('map_div_id_tr', true); setVisibility('misc_tr', false); setVisibility('misc_powered_tr', false); setVisibility('misc_big_map_tr', false); }" /><label for="output_script"><?php _e("GET_MAP_OUTPUT_SCRIPT"); ?></label>
+		<input type="radio" name="output" id="output_iframe" value="iframe" onchange="if (this.checked) { setDisabled('map_div_id', true); setVisibility('map_div_id_tr', false); setVisibility('misc_tr', true); setVisibility('misc_eta_multiplier_tr', true); setVisibility('misc_powered_tr', true); setVisibility('misc_big_map_tr', true); setVisibility('misc_weather_tr', true); }" checked="checked" /><label for="output_iframe"><?php _e("GET_MAP_OUTPUT_IFRAME"); ?></label>
+		<input type="radio" name="output" id="output_script" value="script" onchange="if (this.checked) { setDisabled('map_div_id', false); setVisibility('map_div_id_tr', true); setVisibility('misc_tr', false); setVisibility('misc_eta_multiplier_tr', false); setVisibility('misc_powered_tr', false); setVisibility('misc_big_map_tr', false); setVisibility('misc_weather_tr', false); }" /><label for="output_script"><?php _e("GET_MAP_OUTPUT_SCRIPT"); ?></label>
 		<div id="map_div_id_tr" style="display: inline; visibility:hidden;">
 			 - 
 			<label for="map_div_id"><?php _e("GET_MAP_DIV_ID_TITLE"); ?></label>
@@ -220,6 +220,10 @@ while ($asset = $assets->fetch_assoc()) {
 <tr id="misc_tr">
 	<th colspan="2"><?php _e("GET_MAP_MISC"); ?></th>
 </tr>
+<tr id="misc_eta_multiplier_tr">
+	<td><label for="eta_multiplier"><?php _e("GET_MAP_MISC_ETA_MULTIPLIER_TITLE"); ?></label></td>
+	<td><input type="number" step="0.01" min="0" value="1" name="eta_multiplier" id="eta_multiplier" title="<?php _e("GET_MAP_MISC_ETA_MULTIPLIER_TOOLTIP"); ?>" style="width: 50px" /></td>
+</tr>
 <tr id="misc_powered_tr">
 	<td colspan="2">
 		<input type="checkbox" name="show_powered" id="show_powered" checked="checked" />
@@ -232,7 +236,7 @@ while ($asset = $assets->fetch_assoc()) {
 		<label for="show_big_map"><?php _e("GET_MAP_MISC_BIG_MAP_TITLE"); ?></label>
 	</td>
 </tr>
-<tr id="misc_big_map_tr">
+<tr id="misc_weather_tr">
 	<td colspan="2">
 		<input type="checkbox" name="show_weather" id="show_weather" checked="checked" />
 		<label for="show_weather"><?php _e("GET_MAP_MISC_WEATHER_TITLE"); ?></label>

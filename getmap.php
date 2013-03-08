@@ -55,6 +55,7 @@ $marker_every = getOrDefault("marker_every", 0);
 $dest_name = getOrDefault("destination_name", "Destination");
 $dest_lat = getOrDefault("destination_lat", null);
 $dest_lon = getOrDefault("destination_lon", null);
+$eta_multiplier = getOrDefault("eta_multiplier", 1);
 $show_powered = getOrDefault("show_powered", null) == 'on';
 $show_weather = getOrDefault("show_weather", null) == 'on';
 $show_big_map = getOrDefault("show_big_map", null) == 'on';
@@ -181,7 +182,7 @@ function getMarker($name, $lat, $lon, $time, $heading, $speed, $vmg, $dist_to_pr
 	return "getMarker(map, $lat, $lon, \"$name\", \"$title\", \"$content\");";
 }
 
-function getPointMarker($asset, $point, $prev_point, $first_point, $dest_lat, $dest_lon) {
+function getPointMarker($asset, $point, $prev_point, $first_point, $dest_lat, $dest_lon, $eta_multiplier) {
 	global $MESSAGES;
 	$lat = $point['latitude'];
 	$lon = $point['longitude'];
@@ -233,7 +234,7 @@ function getPointMarker($asset, $point, $prev_point, $first_point, $dest_lat, $d
 			$eta_speed = $vmg;
 		}
 		if ($eta_speed > 0) {
-			$remaining_seconds = round(($dist_to_dest / $eta_speed) * 3600);
+			$remaining_seconds = round($eta_multiplier * ($dist_to_dest / $eta_speed) * 3600);
 			$eta = $now + $remaining_seconds;
 			$hours = round($remaining_seconds / 3600);
 			$days = floor($hours / 24);
@@ -310,7 +311,7 @@ while ($point = $points->fetch_assoc()) {
 	$add_points .= "
 addPoint(points, " . $lat . ", " . $lon . ");";
 	if (($first_marker && $index == 0) || ($marker_every > 0 && ($index % $marker_every) == 0)) {
-		$markers .= "	" . getPointMarker($asset, $point, $prev_point, $first_point, $dest_lat, $dest_lon) . "\n";
+		$markers .= "	" . getPointMarker($asset, $point, $prev_point, $first_point, $dest_lat, $dest_lon, $eta_multiplier) . "\n";
 	}
 	if ($lat < $min_lat) $min_lat = $lat;
 	if ($lat > $max_lat) $max_lat = $lat;
@@ -319,7 +320,7 @@ addPoint(points, " . $lat . ", " . $lon . ");";
 	$index++;
 }
 if ($last_marker && !($first_marker && $index == 1) && !($marker_every > 0 && (($index - 1) % $marker_every) == 0)) {
-	$markers .= "	" . getPointMarker($asset, $last_point, $prev_point, $first_point, $dest_lat, $dest_lon) . "\n";
+	$markers .= "	" . getPointMarker($asset, $last_point, $prev_point, $first_point, $dest_lat, $dest_lon, $eta_multiplier) . "\n";
 }
 
 if ($zoom != null) {
