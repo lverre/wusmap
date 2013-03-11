@@ -26,7 +26,6 @@
  */
 
 include_once "general.php";
-$DATE_FORMAT = "Y-m-d H:i:s";
 
 $asset_id = getOrDefault("asset_id", null);
 $min_date = getOrDefault("min_date", null);

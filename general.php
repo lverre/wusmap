@@ -26,6 +26,7 @@
  */
 
 include_once "config.php";
+$DATE_FORMAT = "Y-m-d H:i:s";
 
 /* Translation */
 

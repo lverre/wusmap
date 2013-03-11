@@ -27,8 +27,6 @@
 
 include_once "general.php";
 
-$DATE_FORMAT = "Y-m-d H:i:s";
-
 /* Get GET parameters */
 
 $map_div_id = getOrDefault("map_div_id", "wusmap");

@@ -22,7 +22,7 @@
  * @package Wusmap
  * @version 1.1
  * @author Laurian Verre
- * @description Gets the URL.
+ * @description Gets the Map URL.
  */
 
 include_once "general.php";
