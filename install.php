@@ -99,26 +99,26 @@ function executeSQLOne($sql) {
 
 function createTables() {
 	global $MESSAGES;
-	$tname_assets = $_POST["db_prefix"] . "assets";
+	$tname_boats = $_POST["db_prefix"] . "boats";
 	$tname_points = $_POST["db_prefix"] . "points";
-	$tassets_exists = false;
+	$tboats_exists = false;
 	$tpoints_exists = false;
 	
-	if (executeSQLOne("show tables like '$tname_assets'") != $tname_assets) {
-		executeSQL("create table $tname_assets 
+	if (executeSQLOne("show tables like '$tname_boats'") != $tname_boats) {
+		executeSQL("create table $tname_boats 
 (
 id int not null, 
 name tinytext not null, 
 unique key id (id)
 );");
 	} else {
-		$tassets_exists = true;
+		$tboats_exists = true;
 	}
 	
 	if (executeSQLOne("show tables like '$tname_points'") != $tname_points) {
 		executeSQL("create table $tname_points 
 (
-asset_id int not null, 
+boat_id int not null, 
 latitude decimal(8,5) not null,
 longitude decimal(8,5) not null,
 time datetime not null,
@@ -129,12 +129,12 @@ speed decimal(8,5)
 		$tpoints_exists = true;
 	}
 	
-	if ($tassets_exists != $tpoints_exists) {
-		return $tassets_exists 
-			? $MESSAGES["INSTALL_TABLE_ASSET_POINTS"]
-			: $MESSAGES["INSTALL_TABLE_POINTS_ASSET"];
+	if ($tboats_exists != $tpoints_exists) {
+		return $tboats_exists 
+			? $MESSAGES["INSTALL_TABLE_BOAT_POINTS"]
+			: $MESSAGES["INSTALL_TABLE_POINTS_BOAT"];
 	} else {
-		return $tassets_exists 
+		return $tboats_exists 
 			? $MESSAGES["INSTALL_TABLE_EXISTED"]
 			: $MESSAGES["INSTALL_TABLE_SUCCESS"];
 	}
@@ -157,7 +157,7 @@ if (isset($_POST["db_name"])) {
 	echo "<li>" . createTables() . "</li>\n";
 	echo "<li>" . $MESSAGES["INSTALL_FILE_REMOVAL"] . (unlink("install.php") ? $MESSAGES["SH_SUCCESS"] : $MESSAGES["SH_FAILURE"]) . "</li>\n";
 	echo "</ul>\n";
-	echo "<a href='manageassets.php'>" . $MESSAGES["INSTALL_ADD_BOAT"] . "</a>\n</div>";
+	echo "<a href='manageboats.php'>" . $MESSAGES["INSTALL_ADD_BOAT"] . "</a>\n</div>";
 } else {
 ?>
 <form method='post'>

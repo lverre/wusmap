@@ -57,17 +57,17 @@ include_once "general.php";
 	</td>
 </tr>
 <tr>
-	<td><label for="asset_id"><?php _e("SH_BOAT_TITLE"); ?></label></td>
+	<td><label for="boat_id"><?php _e("SH_BOAT_TITLE"); ?></label></td>
 	<td>
-		<select name="asset_id" id="asset_id">
+		<select name="boat_id" id="boat_id">
 <?php
-$assets = getAllAssets();
-while ($asset = $assets->fetch_assoc()) {
-	echo "<option value=\"" . $asset['id'] . "\">" . $asset['name'] . "</option>\n";
+$boats = getAllAssets();
+while ($boat = $boats->fetch_assoc()) {
+	echo "<option value=\"" . $boat['id'] . "\">" . $boat['name'] . "</option>\n";
 }
 ?>
 		</select>
-		(<a href="manageassets.php"><?php _e("GET_MAP_MANAGE_BOATS"); ?></a>)
+		(<a href="manageboats.php"><?php _e("GET_MAP_MANAGE_BOATS"); ?></a>)
 	</td>
 </tr>
 </table>

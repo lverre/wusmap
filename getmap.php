@@ -42,7 +42,7 @@ $map_type = getOrDefault("map_type", "HYBRID");
 $route_color = getOrDefault("route_color", "green");
 $route_opacity = getOrDefault("route_opacity", 1);
 $route_weight = getOrDefault("route_weight", 2);
-$asset_id = getOrDefault("asset_id", null);
+$boat_id = getOrDefault("boat_id", null);
 $min_date = getOrDefault("min_date", null);
 $max_date = getOrDefault("max_date", null);
 $first_marker = getOrDefault("first_marker", null) == 'on';
@@ -178,7 +178,7 @@ function getMarker($name, $lat, $lon, $time, $heading, $speed, $vmg, $dist_to_pr
 	return "getMarker(map, $lat, $lon, \"$name\", \"$title\", \"$content\");";
 }
 
-function getPointMarker($asset, $point, $prev_point, $first_point, $dest_lat, $dest_lon, $eta_multiplier) {
+function getPointMarker($boat, $point, $prev_point, $first_point, $dest_lat, $dest_lon, $eta_multiplier) {
 	global $MESSAGES;
 	$lat = $point['latitude'];
 	$lon = $point['longitude'];
@@ -244,7 +244,7 @@ function getPointMarker($asset, $point, $prev_point, $first_point, $dest_lat, $d
 		}
 	}
 	
-	return getMarker($asset['name'], $lat, $lon, $now, $heading, $speed, $vmg, $dist_to_prev, $avg_speed, $avg_vmg, $prev_heading, $dist_to_dest, $bearing, $eta, $remaining);
+	return getMarker($boat['name'], $lat, $lon, $now, $heading, $speed, $vmg, $dist_to_prev, $avg_speed, $avg_vmg, $prev_heading, $dist_to_dest, $bearing, $eta, $remaining);
 }
 
 function getBiggerMapUrl() {
@@ -264,12 +264,12 @@ function getBiggerMapUrl() {
 
 $map_type = "google.maps.MapTypeId." . $map_type;
 
-$asset = executeSQLOne("select * from " . $CONFIG['db_prefix'] . "assets where id=" . $asset_id);
-if ($asset == null) {
+$boat = executeSQLOne("select * from " . $CONFIG['db_prefix'] . "boats where id=" . $boat_id);
+if ($boat == null) {
 	die(__("MAP_SQL_BOAT_INVALID"));
 }
 
-$sql = "select * from " . $CONFIG['db_prefix'] . "points where asset_id=" . $asset_id;
+$sql = "select * from " . $CONFIG['db_prefix'] . "points where boat_id=" . $boat_id;
 if ($min_date != null) {
 	$sql .= " and time >= '$min_date'";
 }
@@ -312,7 +312,7 @@ while ($point = $points->fetch_assoc()) {
 	$add_points .= "
 addPoint(points, " . $lat . ", " . $lon . ");";
 	if (($first_marker && $index == 0) || ($marker_every > 0 && ($index % $marker_every) == 0)) {
-		$markers .= "	" . getPointMarker($asset, $point, $prev_point, $first_point, $dest_lat, $dest_lon, $eta_multiplier) . "\n";
+		$markers .= "	" . getPointMarker($boat, $point, $prev_point, $first_point, $dest_lat, $dest_lon, $eta_multiplier) . "\n";
 	}
 	if ($lat < $min_lat) $min_lat = $lat;
 	if ($lat > $max_lat) $max_lat = $lat;
@@ -321,7 +321,7 @@ addPoint(points, " . $lat . ", " . $lon . ");";
 	$index++;
 }
 if ($last_marker && !($first_marker && $index == 1) && !($marker_every > 0 && (($index - 1) % $marker_every) == 0)) {
-	$markers .= "	" . getPointMarker($asset, $last_point, $prev_point, $first_point, $dest_lat, $dest_lon, $eta_multiplier) . "\n";
+	$markers .= "	" . getPointMarker($boat, $last_point, $prev_point, $first_point, $dest_lat, $dest_lon, $eta_multiplier) . "\n";
 }
 
 if ($zoom != null) {

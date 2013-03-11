@@ -55,9 +55,9 @@ function _e($key) {
 function parseEmail($content) {
 	$xml = simplexml_load_string($content);
 	
-	$asset = $xml->xpath("/old-trail-mail/asset/asset-identifier/value");
-	if (!$asset) die("missing asset");
-	$asset_id = intval($asset[0]);
+	$boat = $xml->xpath("/old-trail-mail/boat/boat-identifier/value");
+	if (!$boat) die("missing boat");
+	$boat_id = intval($boat[0]);
 	
 	$date = $xml->xpath("/old-trail-mail/trail/trail-date-time/date-of-value");
 	$time = $xml->xpath("/old-trail-mail/trail/trail-date-time/time-of-value");
@@ -83,7 +83,7 @@ function parseEmail($content) {
 	$heading_res = $xml->xpath("/old-trail-mail/trail/heading/value-of-value");
 	$heading = floatval($heading_res[0]);
 	
-	return array('asset_id' => $asset_id, 'datetime' => $datetime, 'latitude' => $lat, 'longitude' => $lon, 'speed' => $speed, 'heading' => $heading);
+	return array('boat_id' => $boat_id, 'datetime' => $datetime, 'latitude' => $lat, 'longitude' => $lon, 'speed' => $speed, 'heading' => $heading);
 }
 
 /* SQL */
@@ -110,7 +110,7 @@ function getOrDefault($key, $default) {
 
 function getAllAssets() {
 	global $CONFIG;
-	return executeSQL("select * from " . $CONFIG['db_prefix'] . "assets");
+	return executeSQL("select * from " . $CONFIG['db_prefix'] . "boats");
 }
 
  ?>

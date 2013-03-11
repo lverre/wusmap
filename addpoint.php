@@ -22,7 +22,7 @@
  * @package Wusmap
  * @version 1.1
  * @author Laurian Verre
- * @description Manages the assets.
+ * @description Manages the boats.
  */
 
 include_once "general.php";
@@ -30,7 +30,7 @@ include_once "general.php";
 if (isset($_REQUEST['input'])) {
 	global $CONFIG;
 	
-	$asset_id = null;
+	$boat_id = null;
 	$datetime = null;
 	$latitude = null;
 	$longitude = null;
@@ -38,14 +38,14 @@ if (isset($_REQUEST['input'])) {
 	$speed = null;
 	if ($_REQUEST['input'] == "xml") {
 		$result = parseEmail(stripslashes($_REQUEST['xml']));
-		$asset_id = $result['asset_id'];
+		$boat_id = $result['boat_id'];
 		$datetime = $result['datetime'];
 		$latitude = $result['latitude'];
 		$longitude = $result['longitude'];
 		$heading = $result['heading'];
 		$speed = $result['speed'];
 	} else {
-		$asset_id = $_REQUEST['asset_id'];
+		$boat_id = $_REQUEST['boat_id'];
 		$datetime = $_REQUEST['datetime'];
 		$latitude = $_REQUEST['latitude'];
 		$longitude = $_REQUEST['longitude'];
@@ -55,8 +55,8 @@ if (isset($_REQUEST['input'])) {
 	
 	$table_name = $CONFIG['db_prefix'] . "points";
 	executeSQL("insert into " . $CONFIG['db_prefix'] . "points 
-( asset_id, latitude, longitude, time, heading, speed ) values 
-( $asset_id, $latitude, $longitude, '$datetime', $heading, $speed )");
+( boat_id, latitude, longitude, time, heading, speed ) values 
+( $boat_id, $latitude, $longitude, '$datetime', $heading, $speed )");
 }
 ?>
 <!DOCTYPE html>
@@ -80,13 +80,13 @@ if (isset($_REQUEST['input'])) {
 </div>
 <table id="values_table">
 <tr>
-	<td><label for="asset_id"><?php _e("SH_BOAT_TITLE"); ?></label></td>
+	<td><label for="boat_id"><?php _e("SH_BOAT_TITLE"); ?></label></td>
 	<td>
-		<select name="asset_id" id="asset_id">
+		<select name="boat_id" id="boat_id">
 <?php
-$assets = getAllAssets();
-while ($asset = $assets->fetch_assoc()) {
-	echo "<option value=\"" . $asset['id'] . "\">" . $asset['name'] . "</option>\n";
+$boats = getAllAssets();
+while ($boat = $boats->fetch_assoc()) {
+	echo "<option value=\"" . $boat['id'] . "\">" . $boat['name'] . "</option>\n";
 }
 ?>
 		</select>

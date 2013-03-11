@@ -36,12 +36,14 @@ while ($point = $points->fetch_assoc()) {
 	$title = null;
 	$row = null;
 	foreach ($point as $key => $value) {
-		if ($first_pass) {
-			if ($title != null) $title .= $sep;
-			$title .= $key;
+		if ($key != 'boat_id') {
+			if ($first_pass) {
+				if ($title != null) $title .= $sep;
+				$title .= $key;
+			}
+			if ($row != null) $row .= $sep;
+			$row .= $value;
 		}
-		if ($row != null) $row .= $sep;
-		$row .= $value;
 	}
 	if ($first_pass) {
 		echo $title . "$nl";

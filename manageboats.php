@@ -22,23 +22,23 @@
  * @package Wusmap
  * @version 1.1
  * @author Laurian Verre
- * @description Manages the assets.
+ * @description Manages the boats.
  */
 
 include_once "general.php";
 
 if (isset($_POST['operation'])) {
 	global $CONFIG;
-	$table_name = $CONFIG['db_prefix'] . "assets";
+	$table_name = $CONFIG['db_prefix'] . "boats";
 	switch ($_POST['operation']) {
 	case "add":
 		executeSQL("insert into $table_name ( id, name ) values ( " . $_POST['id'] . ", '" . $_POST['name'] . "' )");
 		break;
 	case "edit":
-		executeSQL("update $table_name set name = '" . $_POST['name'] . "' where id = " . $_POST['assets']);
+		executeSQL("update $table_name set name = '" . $_POST['name'] . "' where id = " . $_POST['boats']);
 		break;
 	case "delete":
-		executeSQL("delete from $table_name where id = " . $_POST['assets']);
+		executeSQL("delete from $table_name where id = " . $_POST['boats']);
 		break;
 	}
 }
@@ -58,19 +58,19 @@ if (isset($_POST['operation'])) {
 <tr>
 	<td><label><?php _e("MANAGE_OPERATION_TITLE"); ?></label></td>
 	<td>
-		<input type="radio" name="operation" id="operation_add" value="add" onchange="if (this.checked) { setDisplay('assets_tr', 'none'); setDisplay('name_tr', 'table-row'); setDisplay('id_tr', 'table-row'); }" checked="checked" /><label for="operation_add"><?php _e("MANAGE_OPERATION_ADD"); ?></label>
-		<input type="radio" name="operation" id="operation_edit" value="edit" onchange="if (this.checked) { setDisplay('assets_tr', 'table-row'); setDisplay('name_tr', 'table-row'); setDisplay('id_tr', 'none'); }" /><label for="operation_edit"><?php _e("MANAGE_OPERATION_EDIT"); ?></label>
-		<input type="radio" name="operation" id="operation_delete" value="delete" onchange="if (this.checked) { setDisplay('assets_tr', 'table-row'); setDisplay('name_tr', 'none'); setDisplay('id_tr', 'none'); }" /><label for="operation_delete"><?php _e("MANAGE_OPERATION_DEL"); ?></label>
+		<input type="radio" name="operation" id="operation_add" value="add" onchange="if (this.checked) { setDisplay('boats_tr', 'none'); setDisplay('name_tr', 'table-row'); setDisplay('id_tr', 'table-row'); }" checked="checked" /><label for="operation_add"><?php _e("MANAGE_OPERATION_ADD"); ?></label>
+		<input type="radio" name="operation" id="operation_edit" value="edit" onchange="if (this.checked) { setDisplay('boats_tr', 'table-row'); setDisplay('name_tr', 'table-row'); setDisplay('id_tr', 'none'); }" /><label for="operation_edit"><?php _e("MANAGE_OPERATION_EDIT"); ?></label>
+		<input type="radio" name="operation" id="operation_delete" value="delete" onchange="if (this.checked) { setDisplay('boats_tr', 'table-row'); setDisplay('name_tr', 'none'); setDisplay('id_tr', 'none'); }" /><label for="operation_delete"><?php _e("MANAGE_OPERATION_DEL"); ?></label>
 	</td>
 </tr>
-<tr id="assets_tr" style="display: none;">
-	<td><label for="assets"><?php _e("SH_BOAT_TITLE"); ?></label></td>
+<tr id="boats_tr" style="display: none;">
+	<td><label for="boats"><?php _e("SH_BOAT_TITLE"); ?></label></td>
 	<td>
-		<select name="assets" id="assets">
+		<select name="boats" id="boats">
 <?php
-$assets = getAllAssets();
-while ($asset = $assets->fetch_assoc()) {
-	echo "<option value=\"" . $asset['id'] . "\">" . $asset['name'] . "</option>\n";
+$boats = getAllAssets();
+while ($boat = $boats->fetch_assoc()) {
+	echo "<option value=\"" . $boat['id'] . "\">" . $boat['name'] . "</option>\n";
 }
 ?>
 		</select>

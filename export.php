@@ -27,7 +27,7 @@
 
 include_once "general.php";
 
-$asset_id = getOrDefault("asset_id", null);
+$boat_id = getOrDefault("boat_id", null);
 $min_date = getOrDefault("min_date", null);
 $max_date = getOrDefault("max_date", null);
 $newline = getOrDefault("newline", "win");
@@ -57,7 +57,7 @@ switch (strtoupper($newline)) {
 		break;
 }
 
-$sql = "select * from " . $CONFIG['db_prefix'] . "points where asset_id=" . $asset_id;
+$sql = "select * from " . $CONFIG['db_prefix'] . "points where boat_id=" . $boat_id;
 if ($min_date != null) {
 	$sql .= " and time >= '$min_date'";
 }
@@ -70,7 +70,7 @@ if ($points->num_rows == 0) {
 	die(__("MAP_SQL_NO_POINT"));
 }
 
-$filename = "wusmap_$asset_id";
+$filename = "wusmap_$boat_id";
 if ($min_date != null) {
 	$filename .= "_min$min_date";
 }

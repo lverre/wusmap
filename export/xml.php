@@ -32,7 +32,7 @@ echo "<?xml version='1.0' encoding='ANSI' ?>$nl";
 echo "<wusmap>$nl";
 while ($point = $points->fetch_assoc()) {
 	foreach ($point as $key => $value) {
-		if ($key != 'asset_id') {
+		if ($key != 'boat_id') {
 			echo "<$key>$value</$key>$nl";
 		}
 	}
