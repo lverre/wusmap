@@ -28,7 +28,7 @@
 header("Content-Type: text/xml");
 header("Content-Disposition: inline; filename=\"$filename.xml\";");
 
-echo "<?xml version='1.0' encoding='ANSI' ?>$nl";
+echo "<?xml version='1.0' encoding='windows-1252' ?>$nl";
 echo "<wusmap>$nl";
 while ($point = $points->fetch_assoc()) {
 	foreach ($point as $key => $value) {

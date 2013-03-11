@@ -101,8 +101,8 @@ while ($boat = $boats->fetch_assoc()) {
 	<td><input type="number" step="0.00001" min="-180" max="180" name="longitude" id="longitude" title="<?php _e("SH_LON_TOOLTIP"); ?>" style="width: 100px" /></td>
 </tr>
 <tr>
-	<td><label for="datetime"><?php _e("ADD_POINT_DATETIME_TITLE"); ?></label></td>
-	<td><input type="datetime" name="datetime" id="datetime" title="<?php _e("ADD_POINT_DATETIME_TOOLTIP"); ?>" /></td>
+	<td><label for="datetime"><?php _e("SH_DATETIME_TITLE"); ?></label></td>
+	<td><input type="datetime" name="datetime" id="datetime" title="<?php _e("SH_DATETIME_TOOLTIP"); ?>" /></td>
 </tr>
 <tr>
 	<td><label for="heading"><?php _e("SH_HEADING_TITLE"); ?></label></td>
