@@ -154,7 +154,7 @@ function getCoord($coord, $is_lat) {
 	$coord = ($coord - $min) * 60;
 	$sec = floor($coord);
 	$card = $is_lat ? ($is_neg ? __("SH_CARD_S") : __("SH_CARD_N")) : ($is_neg ? __("SH_CARD_W") : __("SH_CARD_E"));
-	return $deg . "&deg;" . $min . "'" . $sec . "'' " . $card;
+	return sprintf("%02d&deg;%02d'%02d'' %s", $deg, $min, $sec, $card);
 }
 
 function getMarker($name, $lat, $lon, $time, $heading, $speed, $vmg, $dist_to_prev, $avg_speed_since_prev, $avg_vmg, $prev_heading, $dist_to_dest, $bearing, $eta, $remaining) {
