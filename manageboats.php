@@ -68,7 +68,7 @@ if (isset($_POST['operation'])) {
 	<td>
 		<select name="boats" id="boats">
 <?php
-$boats = getAllAssets();
+$boats = getAllBoats();
 while ($boat = $boats->fetch_assoc()) {
 	echo "<option value=\"" . $boat['id'] . "\">" . $boat['name'] . "</option>\n";
 }

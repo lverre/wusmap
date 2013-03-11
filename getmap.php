@@ -58,66 +58,6 @@ $show_big_map = getOrDefault("show_big_map", null) == 'on';
 
 /* Tools */
 
-function getDist($lat1, $lon1, $lat2, $lon2) {
-	$latr1 = deg2rad($lat1);
-	$latr2 = deg2rad($lat2);
-	$theta = deg2rad($lon1 - $lon2);
-	$arc = acos(sin($latr1) * sin($latr2) +  cos($latr1) * cos($latr2) * cos($theta));
-	return $arc * 3440.0696544276457883369330453564;// Earth radius in nautical mile
-}
-
-function getHeading($lat1, $lon1, $lat2, $lon2) {
-	$latr1 = deg2rad($lat1);
-	$latr2 = deg2rad($lat2);
-	$lonr1 = deg2rad($lon1);
-	$lonr2 = deg2rad($lon2);
-	return (rad2deg(atan2(sin($lonr2 - $lonr1) * cos($latr2), cos($latr1) * sin($latr2) - sin($latr1) * cos($latr2) * cos($lonr2 - $lonr1))) + 360) % 360;
-}
-
-function headingToString($heading) {
-	if ($heading == null) return null;
-	$heading = $heading % 360;
-	if ($heading >= 348.75 || $heading < 11.25) {
-		return __("SH_CARD_N");
-	} else if ($heading < 33.75) {
-		return __("SH_CARD_N") . __("SH_CARD_N") . __("SH_CARD_E");
-	} else if ($heading < 56.25) {
-		return __("SH_CARD_N") . __("SH_CARD_E");
-	} else if ($heading < 78.75) {
-		return __("SH_CARD_E") . __("SH_CARD_N") . __("SH_CARD_E");
-	} else if ($heading < 101.25) {
-		return __("SH_CARD_E");
-	} else if ($heading < 123.75) {
-		return __("SH_CARD_E") . __("SH_CARD_S") . __("SH_CARD_E");
-	} else if ($heading < 146.25) {
-		return __("SH_CARD_S") . __("SH_CARD_E");
-	} else if ($heading < 168.75) {
-		return __("SH_CARD_S") . __("SH_CARD_S") . __("SH_CARD_E");
-	} else if ($heading < 191.25) {
-		return __("SH_CARD_S");
-	} else if ($heading < 213.75) {
-		return __("SH_CARD_S") . __("SH_CARD_S") . __("SH_CARD_W");
-	} else if ($heading < 236.25) {
-		return __("SH_CARD_S") . __("SH_CARD_W");
-	} else if ($heading < 258.75) {
-		return __("SH_CARD_W") . __("SH_CARD_S") . __("SH_CARD_W");
-	} else if ($heading < 281.25) {
-		return __("SH_CARD_W");
-	} else if ($heading < 303.75) {
-		return __("SH_CARD_W") . __("SH_CARD_N") . __("SH_CARD_W");
-	} else if ($heading < 326.25) {
-		return __("SH_CARD_N") . __("SH_CARD_W");
-	} else if ($heading < 348.75) {
-		return __("SH_CARD_N") . __("SH_CARD_N") . __("SH_CARD_W");
-	} else {
-		return __("SH_NA");// Should NEVER happen
-	}
-}
-
-function getVMG($speed, $heading, $bearing) {
-	return $speed * cos(deg2rad($bearing) - deg2rad($heading));
-}
-
 function getRow($name, $format, $value1, $value2 = null, $value3 = null) {
 	if ($name == null || $value1 == null) {
 		return "";
@@ -140,37 +80,22 @@ function getRow($name, $format, $value1, $value2 = null, $value3 = null) {
 	return "<tr><td class='wusmap-infobox-description-key'>$name</td><td class='wusmap-infobox-description-value'>$value</td>";
 }
 
-function getCoord($coord, $is_lat) {
-	global $MESSAGES;
-	$is_neg = $coord < 0;
-	if ($is_neg) {
-		$coord = 0 - $coord;
-	}
-	$deg = floor($coord);
-	$coord = ($coord - $deg) * 60;
-	$min = floor($coord);
-	$coord = ($coord - $min) * 60;
-	$sec = floor($coord);
-	$card = $is_lat ? ($is_neg ? __("SH_CARD_S") : __("SH_CARD_N")) : ($is_neg ? __("SH_CARD_W") : __("SH_CARD_E"));
-	return sprintf("%02d&deg;%02d'%02d'' %s", $deg, $min, $sec, $card);
-}
-
 function getMarker($name, $lat, $lon, $time, $heading, $speed, $vmg, $dist_to_prev, $avg_speed_since_prev, $avg_vmg, $prev_heading, $dist_to_dest, $bearing, $eta, $remaining) {
 	global $MESSAGES;
 	global $DATE_FORMAT;
-	$time = $time != null ? date($DATE_FORMAT, $time) : null;
+	$time = parseDate($time);
 	
 	$content = "<table>";
 	$content .= getRow(__("MAP_DATETIME_TITLE"), null, $time);
-	$content .= getRow(__("SH_LAT_TITLE"), null, getCoord($lat, true));
-	$content .= getRow(__("SH_LON_TITLE"), null, getCoord($lon, false));
-	$content .= getRow(__("SH_HEADING_TITLE"), __("MAP_HEADING_FORMAT"), $heading, headingToString($heading));
-	$content .= $vmg != null ? getRow(__("SH_SPEED_TITLE"), __("MAP_SPEED_VMG_FORMAT"), $speed, $vmg) : getRow(__("SH_SPEED_TITLE"), __("MAP_SPEED_FORMAT"), $speed);
+	$content .= getRow(__("SH_LAT_TITLE"), null, coordToString($lat, true));
+	$content .= getRow(__("SH_LON_TITLE"), null, coordToString($lon, false));
+	$content .= getRow(__("SH_HEADING_TITLE"), __("MAP_HEADING_FORMAT"), $heading, headingToHRString($heading));
+	$content .= $vmg != null ? getRow(__("SH_SPEED_TITLE"), __("MAP_SPEED_VMG_FORMAT"), $speed, $vmg) : getRow(__("SH_SPEED_TITLE"), __("SH_SPEED_FORMAT"), $speed);
 	$content .= getRow(__("MAP_TO_PREV_TITLE"), __("MAP_DIST_HEADING_FORMAT"), $dist_to_prev, $prev_heading, headingToString($prev_heading));
-	$content .= $avg_vmg != null ? getRow(__("MAP_SPEED_AVG_TITLE"), __("MAP_SPEED_VMG_FORMAT"), $avg_speed_since_prev, $avg_vmg) : getRow(__("MAP_SPEED_AVG_TITLE"), __("MAP_SPEED_FORMAT"), $avg_speed_since_prev);
+	$content .= $avg_vmg != null ? getRow(__("MAP_SPEED_AVG_TITLE"), __("MAP_SPEED_VMG_FORMAT"), $avg_speed_since_prev, $avg_vmg) : getRow(__("MAP_SPEED_AVG_TITLE"), __("SH_SPEED_FORMAT"), $avg_speed_since_prev);
 	$content .= getRow(__("MAP_TO_DEST_TITLE"), __("MAP_DIST_HEADING_FORMAT"), $dist_to_dest, $bearing, headingToString($bearing));
 	$content .= getRow(__("MAP_REMAINING_TITLE"), null, $remaining);
-	$content .= getRow("<span title='" . __("MAP_ETA_TOOLTIP") . "'>" . __("MAP_ETA_TITLE") . "</span>", null, $eta != null ? date($DATE_FORMAT, $eta) : null);
+	$content .= getRow("<span title='" . __("MAP_ETA_TOOLTIP") . "'>" . __("MAP_ETA_TITLE") . "</span>", null, parseDate($eta));
 	$content .= "</table>";
 	
 	$title = $time != null ? sprintf(__("MAP_TITLE_FORMAT"), $name, $time) : $name;

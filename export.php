@@ -53,7 +53,7 @@ switch (strtoupper($newline)) {
 	case "UNIX":
 	case "LF":
 	default:
-		$nl = "\n";
+		$nl = $newline;
 		break;
 }
 

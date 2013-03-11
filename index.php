@@ -61,7 +61,7 @@ include_once "general.php";
 	<td>
 		<select name="boat_id" id="boat_id">
 <?php
-$boats = getAllAssets();
+$boats = getAllBoats();
 while ($boat = $boats->fetch_assoc()) {
 	echo "<option value=\"" . $boat['id'] . "\">" . $boat['name'] . "</option>\n";
 }

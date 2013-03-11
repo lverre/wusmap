@@ -108,9 +108,97 @@ function getOrDefault($key, $default) {
 	return isset($_GET[$key]) ? $_GET[$key] : $default;
 }
 
-function getAllAssets() {
+function getAllBoats() {
 	global $CONFIG;
 	return executeSQL("select * from " . $CONFIG['db_prefix'] . "boats");
+}
+
+function coordToString($coord, $is_lat) {
+	global $MESSAGES;
+	$is_neg = $coord < 0;
+	if ($is_neg) {
+		$coord = 0 - $coord;
+	}
+	$deg = floor($coord);
+	$coord = ($coord - $deg) * 60;
+	$min = floor($coord);
+	$coord = ($coord - $min) * 60;
+	$sec = floor($coord);
+	$card = $is_lat ? ($is_neg ? __("SH_CARD_S") : __("SH_CARD_N")) : ($is_neg ? __("SH_CARD_W") : __("SH_CARD_E"));
+	return sprintf("%02d&deg;%02d'%02d'' %s", $deg, $min, $sec, $card);
+}
+
+function headingToHRString($heading) {
+	if ($heading == null) return null;
+	$heading = $heading % 360;
+	if ($heading >= 348.75 || $heading < 11.25) {
+		return __("SH_CARD_N");
+	} else if ($heading < 33.75) {
+		return __("SH_CARD_N") . __("SH_CARD_N") . __("SH_CARD_E");
+	} else if ($heading < 56.25) {
+		return __("SH_CARD_N") . __("SH_CARD_E");
+	} else if ($heading < 78.75) {
+		return __("SH_CARD_E") . __("SH_CARD_N") . __("SH_CARD_E");
+	} else if ($heading < 101.25) {
+		return __("SH_CARD_E");
+	} else if ($heading < 123.75) {
+		return __("SH_CARD_E") . __("SH_CARD_S") . __("SH_CARD_E");
+	} else if ($heading < 146.25) {
+		return __("SH_CARD_S") . __("SH_CARD_E");
+	} else if ($heading < 168.75) {
+		return __("SH_CARD_S") . __("SH_CARD_S") . __("SH_CARD_E");
+	} else if ($heading < 191.25) {
+		return __("SH_CARD_S");
+	} else if ($heading < 213.75) {
+		return __("SH_CARD_S") . __("SH_CARD_S") . __("SH_CARD_W");
+	} else if ($heading < 236.25) {
+		return __("SH_CARD_S") . __("SH_CARD_W");
+	} else if ($heading < 258.75) {
+		return __("SH_CARD_W") . __("SH_CARD_S") . __("SH_CARD_W");
+	} else if ($heading < 281.25) {
+		return __("SH_CARD_W");
+	} else if ($heading < 303.75) {
+		return __("SH_CARD_W") . __("SH_CARD_N") . __("SH_CARD_W");
+	} else if ($heading < 326.25) {
+		return __("SH_CARD_N") . __("SH_CARD_W");
+	} else if ($heading < 348.75) {
+		return __("SH_CARD_N") . __("SH_CARD_N") . __("SH_CARD_W");
+	} else {
+		return __("SH_NA");// Should NEVER happen
+	}
+}
+
+function headingToString($speed) {
+	return sprintf(__("SH_HEADING_FORMAT"), $speed);
+}
+
+function speedToString($speed) {
+	return sprintf(__("SH_SPEED_FORMAT"), $speed);
+}
+
+function parseDate($date) {
+	global $DATE_FORMAT;
+	return $date != null ? date($DATE_FORMAT, $date) : null;
+}
+
+function getDist($lat1, $lon1, $lat2, $lon2) {
+	$latr1 = deg2rad($lat1);
+	$latr2 = deg2rad($lat2);
+	$theta = deg2rad($lon1 - $lon2);
+	$arc = acos(sin($latr1) * sin($latr2) +  cos($latr1) * cos($latr2) * cos($theta));
+	return $arc * 3440.0696544276457883369330453564;// Earth radius in nautical mile
+}
+
+function getHeading($lat1, $lon1, $lat2, $lon2) {
+	$latr1 = deg2rad($lat1);
+	$latr2 = deg2rad($lat2);
+	$lonr1 = deg2rad($lon1);
+	$lonr2 = deg2rad($lon2);
+	return (rad2deg(atan2(sin($lonr2 - $lonr1) * cos($latr2), cos($latr1) * sin($latr2) - sin($latr1) * cos($latr2) * cos($lonr2 - $lonr1))) + 360) % 360;
+}
+
+function getVMG($speed, $heading, $bearing) {
+	return $speed * cos(deg2rad($bearing) - deg2rad($heading));
 }
 
  ?>
