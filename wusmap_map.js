@@ -98,7 +98,7 @@ var infoOptions = {
     disableAutoPan: false
     ,boxStyle: { 
 	opacity: 0.9
-	,width: "300px"
+	,width: "360px"
     }
     ,pixelOffset: new google.maps.Size(-120, 0)
     ,enableEventPropagation: true
