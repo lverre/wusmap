@@ -55,8 +55,8 @@ function _e($key) {
 function parseEmail($content) {
 	$xml = simplexml_load_string($content);
 	
-	$boat = $xml->xpath("/old-trail-mail/boat/boat-identifier/value");
-	if (!$boat) die("missing boat");
+	$boat = $xml->xpath("/old-trail-mail/asset/asset-identifier/value");
+	if (!$boat) die("XML asset tag missing");
 	$boat_id = intval($boat[0]);
 	
 	$date = $xml->xpath("/old-trail-mail/trail/trail-date-time/date-of-value");
