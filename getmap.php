@@ -51,6 +51,7 @@ $marker_every = getOrDefault("marker_every", 0);
 $dest_name = getOrDefault("destination_name", "Destination");
 $dest_lat = getOrDefault("destination_lat", null);
 $dest_lon = getOrDefault("destination_lon", null);
+$min_date_trip = getOrDefault("min_date_trip", $min_date);
 $eta_multiplier = getOrDefault("eta_multiplier", 1);
 $show_powered = getOrDefault("show_powered", null) == 'on';
 $show_weather = getOrDefault("show_weather", null) == 'on';
@@ -150,11 +151,13 @@ function getPointMarker($boat, $point, $prev_point, $first_point, $dest_lat, $de
 			$flon = $first_point['longitude'];
 			$dist_done = getDist($flat, $flon, $lat, $lon);
 			$interval = $now - strtotime($first_point['time']);
-			$fvmg = getVMG(
-				$dist_done / ($interval / 3600),
-				getHeading($flat, $flon, $lat, $lon),
-				getHeading($flat, $flon, $dest_lat, $dest_lon));
-			if ($fvmg >= 1) $eta_speed = $fvmg;
+			if ($interval > 0) {
+				$fvmg = getVMG(
+					$dist_done / ($interval / 3600),
+					getHeading($flat, $flon, $lat, $lon),
+					getHeading($flat, $flon, $dest_lat, $dest_lon));
+				if ($fvmg >= 1) $eta_speed = $fvmg;
+			}
 		}
 		if ($eta_speed == null) {
 			$eta_speed = $vmg;
@@ -224,6 +227,7 @@ if ($dest_lat != null && $dest_lon != null) {
 	$dest_lat = null;
 	$dest_lon = null;
 }
+$min_date_trip = $min_date_trip != null ? strtotime($min_date_trip) : -1;
 $first_point = null;
 $last_point = null;
 $prev_point = null;
@@ -231,7 +235,9 @@ $index = 0;
 while ($point = $points->fetch_assoc()) {
 	$prev_point = $last_point;
 	$last_point = $point;
-	if ($first_point == null) $first_point = $point;
+	if ($first_point == null) {
+		if ($min_date_trip < 0 || strtotime($point['time']) >= $min_date_trip) $first_point = $point;
+	}
 	$lat = $point['latitude'];
 	$lon = $point['longitude'];
 	$add_points .= "

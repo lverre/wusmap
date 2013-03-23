@@ -102,11 +102,11 @@ while ($boat = $boats->fetch_assoc()) {
 </tr>
 <tr id="center_lat_tr">
 	<td><label for="center_lat"><?php _e("SH_LAT_TITLE"); ?></label></td>
-	<td><input type="number" step="0.00001" min="-90" max="90" name="center_lat" id="center_lat" title="<?php _e("SH_LAT_TOOLTIP"); ?>" style="width: 100px" disabled="disabled" /></td>
+	<td><input type="number" step="0.000001" min="-90" max="90" name="center_lat" id="center_lat" title="<?php _e("SH_LAT_TOOLTIP"); ?>" style="width: 100px" disabled="disabled" /></td>
 </tr>
 <tr id="center_lon_tr">
 	<td><label for="center_lon"><?php _e("SH_LON_TITLE"); ?></label></td>
-	<td><input type="number" step="0.00001" min="-180" max="180" name="center_lon" id="center_lon" title="<?php _e("SH_LON_TOOLTIP"); ?>" style="width: 100px" disabled="disabled" /></td>
+	<td><input type="number" step="0.000001" min="-180" max="180" name="center_lon" id="center_lon" title="<?php _e("SH_LON_TOOLTIP"); ?>" style="width: 100px" disabled="disabled" /></td>
 </tr>
 <tr>
 	<td><label for="map_type"><?php _e("FORM_TYPE_TITLE"); ?></label></td>
@@ -203,7 +203,7 @@ while ($boat = $boats->fetch_assoc()) {
 </tr>
 <tr>
 	<td colspan="2">
-		<input type="checkbox" id="destination_show" title="<?php _e("FORM_DEST_SHOW_TOOLTIP"); ?>" onchange="setDisabled('destination_name', !this.checked); setDisabled('destination_lon', !this.checked); setDisabled('destination_lat', !this.checked);" />
+		<input type="checkbox" id="destination_show" title="<?php _e("FORM_DEST_SHOW_TOOLTIP"); ?>" onchange="setDisabled('destination_name', !this.checked); setDisabled('destination_lon', !this.checked); setDisabled('destination_lat', !this.checked); setDisabled('min_date_trip', !this.checked);" />
 		<label for="destination_show"><?php _e("FORM_DEST_SHOW_TITLE"); ?></label>
 	</td>
 </tr>
@@ -213,11 +213,15 @@ while ($boat = $boats->fetch_assoc()) {
 </tr>
 <tr id="destination_lat_tr">
 	<td><label for="destination_lat"><?php _e("SH_LAT_TITLE"); ?></label></td>
-	<td><input type="number" step="0.00001" min="-90" max="90" name="destination_lat" id="destination_lat" title="<?php _e("SH_LAT_TOOLTIP"); ?>" style="width: 100px" disabled="disabled" /></td>
+	<td><input type="number" step="0.000001" min="-90" max="90" name="destination_lat" id="destination_lat" title="<?php _e("SH_LAT_TOOLTIP"); ?>" style="width: 100px" disabled="disabled" /></td>
 </tr>
 <tr id="destination_lon_tr">
 	<td><label for="destination_lon"><?php _e("SH_LON_TITLE"); ?></label></td>
-	<td><input type="number" step="0.00001" min="-180" max="180" name="destination_lon" id="destination_lon" title="<?php _e("SH_LON_TOOLTIP"); ?>" style="width: 100px" disabled="disabled" /></td>
+	<td><input type="number" step="0.000001" min="-180" max="180" name="destination_lon" id="destination_lon" title="<?php _e("SH_LON_TOOLTIP"); ?>" style="width: 100px" disabled="disabled" /></td>
+</tr>
+<tr id="destination_date_min_tr">
+	<td><label for="min_date_trip"><?php _e("FORM_DEST_DATE_MIN_TITLE"); ?></label></td>
+	<td><input type="datetime" name="min_date_trip" id="min_date_trip" disabled="disabled" title="<?php _e("FORM_DEST_DATE_MIN_TOOLTIP"); ?>" /></td>
 </tr>
 <tr id="misc_tr">
 	<th colspan="2"><?php _e("FORM_MISC"); ?></th>

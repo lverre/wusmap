@@ -94,11 +94,11 @@ while ($boat = $boats->fetch_assoc()) {
 </tr>
 <tr>
 	<td><label for="latitude"><?php _e("SH_LAT_TITLE"); ?></label></td>
-	<td><input type="number" step="0.00001" min="-90" max="90" name="latitude" id="latitude" title="<?php _e("SH_LAT_TOOLTIP"); ?>" style="width: 100px" /></td>
+	<td><input type="number" step="0.000001" min="-90" max="90" name="latitude" id="latitude" title="<?php _e("SH_LAT_TOOLTIP"); ?>" style="width: 100px" /></td>
 </tr>
 <tr>
 	<td><label for="longitude"><?php _e("SH_LON_TITLE"); ?></label></td>
-	<td><input type="number" step="0.00001" min="-180" max="180" name="longitude" id="longitude" title="<?php _e("SH_LON_TOOLTIP"); ?>" style="width: 100px" /></td>
+	<td><input type="number" step="0.000001" min="-180" max="180" name="longitude" id="longitude" title="<?php _e("SH_LON_TOOLTIP"); ?>" style="width: 100px" /></td>
 </tr>
 <tr>
 	<td><label for="datetime"><?php _e("SH_DATETIME_TITLE"); ?></label></td>
