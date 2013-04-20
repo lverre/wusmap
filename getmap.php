@@ -64,19 +64,19 @@ function getRow($name, $format, $value1, $value2 = null, $value3 = null) {
 		return "";
 	}
 	
-	$value = null;
+	$value = $value1;
 	if ($format != null) {
-		if ($value2 != null) {
-			if ($value3 != null) {
-				$value = sprintf($format, $value1, $value2, $value3);
+		if ($value1 != null) {
+			if ($value2 != null) {
+				if ($value3 != null) {
+					$value = sprintf($format, $value1, $value2, $value3);
+				} else {
+					$value = sprintf($format, $value1, $value2);
+				}
 			} else {
-				$value = sprintf($format, $value1, $value2);
+				$value = sprintf($format, $value1);
 			}
-		} else {
-			$value = sprintf($format, $value1);
 		}
-	} else {
-		$value = $value1;
 	}
 	return "<tr><td class='wusmap-infobox-description-key'>$name</td><td class='wusmap-infobox-description-value'>$value</td>";
 }
@@ -92,9 +92,13 @@ function getMarker($name, $lat, $lon, $time, $heading, $speed, $vmg, $dist_to_pr
 	$content .= getRow(__("SH_LON_TITLE"), null, coordToString($lon, false));
 	$content .= getRow(__("SH_HEADING_TITLE"), __("MAP_HEADING_FORMAT"), $heading, headingToHRString($heading));
 	$content .= $vmg != null ? getRow(__("SH_SPEED_TITLE"), __("MAP_SPEED_VMG_FORMAT"), $speed, $vmg) : getRow(__("SH_SPEED_TITLE"), __("SH_SPEED_FORMAT"), $speed);
-	$content .= getRow(__("MAP_TO_PREV_TITLE"), __("MAP_DIST_HEADING_FORMAT"), $dist_to_prev, $prev_heading, headingToHRString($prev_heading));
+	$content .= $prev_heading != null
+		? getRow(__("MAP_TO_PREV_TITLE"), __("MAP_DIST_HEADING_FORMAT"), $dist_to_prev, $prev_heading, headingToHRString($prev_heading))
+		: getRow(__("MAP_TO_PREV_TITLE"), __("SH_DIST_FORMAT"), $dist_to_prev);
 	$content .= $avg_vmg != null ? getRow(__("MAP_SPEED_AVG_TITLE"), __("MAP_SPEED_VMG_FORMAT"), $avg_speed_since_prev, $avg_vmg) : getRow(__("MAP_SPEED_AVG_TITLE"), __("SH_SPEED_FORMAT"), $avg_speed_since_prev);
-	$content .= getRow(__("MAP_TO_DEST_TITLE"), __("MAP_DIST_HEADING_FORMAT"), $dist_to_dest, $bearing, headingToHRString($bearing));
+	$content .= $bearing != null
+		? getRow(__("MAP_TO_DEST_TITLE"), __("MAP_DIST_HEADING_FORMAT"), $dist_to_dest, $bearing, headingToHRString($bearing))
+		: getRow(__("MAP_TO_DEST_TITLE"), __("SH_DIST_FORMAT"), $dist_to_dest);
 	$content .= getRow(__("MAP_REMAINING_TITLE"), null, $remaining);
 	$content .= getRow("<span title='" . __("MAP_ETA_TOOLTIP") . "'>" . __("MAP_ETA_TITLE") . "</span>", null, parseDate($eta));
 	$content .= "</table>";
